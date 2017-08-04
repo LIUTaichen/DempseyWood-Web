@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+
 @RestController
 @RequestMapping("/status")
 public class EquipmentStatusController {
@@ -19,6 +21,7 @@ public class EquipmentStatusController {
         newStatus.setEquipment(status.getEquipment());
         newStatus.setOperator(status.getOperator());
         newStatus.setStatus(status.getStatus());
+       // newStatus.setTimestamp(status.getTimestamp());
         equipmentStatusRepository.save(newStatus);
 
         return "Saved";
