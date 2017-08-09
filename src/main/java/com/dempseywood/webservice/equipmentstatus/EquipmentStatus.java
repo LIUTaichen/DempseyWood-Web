@@ -4,10 +4,8 @@ package com.dempseywood.webservice.equipmentstatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Entity
@@ -19,13 +17,13 @@ public class EquipmentStatus {
 
     private String equipment;
 
+    private String task;
+
     private String operator;
 
     private String status;
 
-   /* @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSS")
-    @JsonProperty("timestamp")
-    private Date timestamp;*/
+    private Date timestamp;
 
 
     public Integer getId() {
@@ -42,6 +40,14 @@ public class EquipmentStatus {
 
     public void setEquipment(String equipment) {
         this.equipment = equipment;
+    }
+
+    public String getTask() {
+        return task;
+    }
+
+    public void setTask(String task) {
+        this.task = task;
     }
 
     public String getOperator() {
@@ -61,12 +67,12 @@ public class EquipmentStatus {
         this.status = status;
     }
 
-  /*  public Date getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
-    }*/
+    }
 
 }

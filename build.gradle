@@ -33,8 +33,23 @@ dependencies {
 
     // JPA Data (We are going to use Repositories, Entities, Hibernate, etc...)
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    //Jackson support for java 8
+    compile("com.fasterxml.jackson.module:jackson-module-parameter-names")
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-jdk8")
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
+    //email
+    compile("org.springframework.boot:spring-boot-starter-mail")
 
     // Use MySQL Connector-J
     compile 'mysql:mysql-connector-java'
+    compile group: 'org.apache.poi', name: 'poi', version: '3.9'
+    // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
+    compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.9'
+
+    // https://mvnrepository.com/artifact/javax.mail/javax.mail-api
+    compile group: 'javax.mail', name: 'javax.mail-api', version: '1.5.1'
+
+
     testCompile("junit:junit")
 }
