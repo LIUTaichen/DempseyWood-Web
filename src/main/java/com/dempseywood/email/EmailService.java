@@ -17,6 +17,8 @@ import javax.annotation.PostConstruct;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 import org.springframework.scheduling.annotation.Async;
 
@@ -32,31 +34,6 @@ public class EmailService {
     @Autowired
     private DailyExcelReportView report;
 
-    private Properties props = new Properties();
-
-    @PostConstruct
-    public void init() {
-       /* logger.info("initiating mail service, using the following config:");
-        logger.info("MAIL_SMTP_AUTH : " + MAIL_SMTP_AUTH);
-        logger.info("MAIL_SMTP_STARTTLS_ENABLE : " + MAIL_SMTP_STARTTLS_ENABLE);
-        logger.info("MAIL_SMTP_HOST : " + MAIL_SMTP_HOST);
-        logger.info("MAIL_SMTP_PORT : " + MAIL_SMTP_PORT);
-        logger.info("GMAIL_USERNAME : " + GMAIL_USERNAME);
-        logger.info("GMAIL_PASSWORD : " + GMAIL_PASSWORD);
-
-        props.put("mail.smtp.auth", MAIL_SMTP_AUTH);
-        props.put("mail.smtp.starttls.enable", MAIL_SMTP_STARTTLS_ENABLE);
-
-        mailSender.setHost(MAIL_SMTP_HOST);
-        mailSender.setPort(MAIL_SMTP_PORT);
-        mailSender.setUsername(GMAIL_USERNAME);
-        mailSender.setPassword(GMAIL_PASSWORD);
-        mailSender.setJavaMailProperties(props);
-
-        velocityEngine.setProperty("spring.velocity.resource-loader-path", "classpath:/templates/");*/
-
-    }
-
     public void sendMail(String from, String to, String subject, String msg) {
 
         SimpleMailMessage message = new SimpleMailMessage();
@@ -69,55 +46,45 @@ public class EmailService {
     }
 
 
-   /* public String formatCustomerResponseEmail(Customer customer, List<Response> allResponses){
-        VelocityContext velocityContext = new VelocityContext();
-        velocityContext.put("customer", customer);
-        velocityContext.put("allResponses", allResponses);
-        StringWriter stringWriter = new StringWriter();
-        velocityEngine.mergeTemplate("templates/CustomerResponse.vm", "UTF-8", velocityContext, stringWriter);
-        return stringWriter.toString();
-    }*/
-   /* @Async
-    public void sendCustomerResponseEmail(Customer customer, List<Response> allResponses){
-        String emailContent = this.formatCustomerResponseEmail(customer, allResponses);
-        String toAddress = notificationService.getCurrentNotificationEmail();
-        logger.info("sending to " + toAddress);
-        this.sendMail(GMAIL_USERNAME, toAddress, CUSTOMER_RESPONSE_EMAIL_SUBJECT, emailContent);
-    }
-*/
-
    public void send(){
-       MimeMessage mimeMessage = emailSender.createMimeMessage();
-       FileSystemResource file = new FileSystemResource(new File("Informe.xlsx"));
-       try {
-           MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-           helper.setTo("tliu861@aucklanduni.ac.nz");
-           helper.setFrom("xyz@gmail.com");
-           helper.setText(
-                   "Hi");
-
-           Workbook workbook = report.writeReport();
-           ByteArrayOutputStream os = new ByteArrayOutputStream();
-
-
-           try {
-               workbook.write(os);
-
-           }catch(IOException ex){
-               ex.printStackTrace();
-           }
-           ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
-
-           helper.addAttachment("report.xlsx", resource);
-       } catch (MessagingException e) {
-           e.printStackTrace();
-       }
+        String toEmailAddress = "tliu861@aucklanduni.ac.nz";
+        String messageString = "Hi, //n Please find the daily report of equipment activity in the attachment";
+       MimeMessage mimeMessage = getMimeMessage(toEmailAddress , messageString);
 
        try {
            this.emailSender.send(mimeMessage);
        } catch (MailException ex) {
-           // simply log it and go on...
-           System.err.println(ex.getMessage());
+           logger.error(ex);
        }
    }
+
+    private MimeMessage getMimeMessage(String toEmailAddress, String messageString) {
+        logger.info("constructing and sending email.");
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+            helper.setTo(toEmailAddress);
+            helper.setText(
+                    messageString);
+            Workbook workbook = report.writeReport();
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+            try {
+                workbook.write(os);
+
+            }catch(IOException ex){
+                ex.printStackTrace();
+            }
+            ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
+            SimpleDateFormat sdf = new SimpleDateFormat("dd_mm_yyyy");
+            StringBuilder fileNameStringBuilder = new StringBuilder();
+            fileNameStringBuilder.append("Daily_Report_");
+            fileNameStringBuilder.append(sdf.format(new Date()));
+            fileNameStringBuilder.append(".xlsx");
+            helper.addAttachment(fileNameStringBuilder.toString(), resource);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        return mimeMessage;
+    }
 }

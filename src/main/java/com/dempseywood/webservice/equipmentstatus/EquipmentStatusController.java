@@ -3,8 +3,11 @@ package com.dempseywood.webservice.equipmentstatus;
 import com.dempseywood.email.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/status")
@@ -20,14 +23,9 @@ public class EquipmentStatusController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public @ResponseBody String addNewEquipmentStatus(@RequestBody EquipmentStatus status) {
-/*        EquipmentStatus newStatus = new EquipmentStatus();
-        newStatus.setEquipment(status.getEquipment());
-        newStatus.setOperator(status.getOperator());
-        newStatus.setStatus(status.getStatus());
-        newStatus.setTimestamp(status.getTimestamp());*/
-        equipmentStatusRepository.save(status);
-
+    @Transactional
+    public @ResponseBody String addNewEquipmentStatus(@RequestBody Iterable<EquipmentStatus> statusList) {
+        equipmentStatusRepository.save(statusList);
         return "Saved";
     }
 
