@@ -14,6 +14,10 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 
+bootRun {
+    addResources = true
+}
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 repositories {
@@ -25,6 +29,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
     }
+    compile("org.springframework.boot:spring-boot-devtools")
     compile("org.springframework.boot:spring-boot-starter-jetty")
     // end::jetty[]
     // tag::actuator[]
@@ -49,6 +54,13 @@ dependencies {
 
     // https://mvnrepository.com/artifact/javax.mail/javax.mail-api
     compile group: 'javax.mail', name: 'javax.mail-api', version: '1.5.1'
+
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-thymeleaf
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf'
+// https://mvnrepository.com/artifact/org.webjars/bootstrap
+    compile group: 'org.webjars', name: 'bootstrap', version: '3.3.7'
+
+
 
 
     testCompile("junit:junit")
