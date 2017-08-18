@@ -6,12 +6,16 @@
 
     <link rel="stylesheet" type="text/css"
           href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
-
-    <link rel="stylesheet" th:href="@{/css/main.css}"
-          href="../../css/main.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
           integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
           crossorigin=""/>
+    <link rel="stylesheet" th:href="@{/css/lib/draw/leaflet.draw.css}"
+          href="../../css/lib/draw/leaflet.draw.css" />
+    <link rel="stylesheet" th:href="@{/css/main.css}"
+          href="../../css/main.css" />
+
+
+
 
 
 
@@ -57,6 +61,7 @@ var coordinates = [[${coordinates}]];
 
 /*]]>*/
 </script>
+<script type="text/javascript" th:src="@{/js/lib/Leaflet.draw.js}" />
 <script type="text/javascript" th:src="@{/js/src/dw.js}" />
 
 </body>
