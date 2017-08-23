@@ -10,7 +10,7 @@ public class Geofence {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
     @OneToMany(cascade= CascadeType.ALL, fetch=FetchType.LAZY)
-    private List<Latlng> vertices;
+    private List<LatLng> vertices;
 
     public Integer getId() {
         return id;
@@ -20,11 +20,11 @@ public class Geofence {
         this.id = id;
     }
 
-    public List<Latlng> getVertices() {
+    public List<LatLng> getVertices() {
         return vertices;
     }
 
-    public void setVertices(List<Latlng> vertices) {
+    public void setVertices(List<LatLng> vertices) {
         this.vertices = vertices;
     }
 

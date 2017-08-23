@@ -47,20 +47,7 @@ public class GreetingController {
         return "welcome";
     }
 
-    @RequestMapping("/loadfromnavixy")
-    public String load(Map<String, Object> model){
 
-        model.put("message","dw");
-
-         List<Reading >  readingList =       readingRepository.findByTrackerId(9);
-        Double[][] readings = new Double[readingList.size()][2];
-        for(int i = 0; i<readingList.size() ; i++){
-            readings[i] = new Double[]{readingList.get(i).getLat(), readingList.get(i).getLng()};
-        }
-        model.put("coordinates", readings);
-
-        return "welcome";
-    }
 
     @Transactional
     private void saveReading(List<Reading> readingList, Integer trackerId){

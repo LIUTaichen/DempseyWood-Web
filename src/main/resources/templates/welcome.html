@@ -2,21 +2,25 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Spring Boot Thymeleaf Hello World Example</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
     <link rel="stylesheet" type="text/css"
-          href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+          href="/webjars/bootstrap/3.3.7/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
           integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
           crossorigin=""/>
     <link rel="stylesheet" th:href="@{/css/lib/draw/leaflet.draw.css}"
-          href="../../css/lib/draw/leaflet.draw.css" />
+          href="../../css/lib/draw/leaflet.draw.css"/>
     <link rel="stylesheet" th:href="@{/css/main.css}"
-          href="../../css/main.css" />
+          href="../../css/main.css"/>
 
-
-
-
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+            integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+            crossorigin=""></script>
+    <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script type="text/javascript"
+            src="/webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/lib/Leaflet.draw.js}"/>
 
 
 </head>
@@ -35,34 +39,83 @@
         </div>
     </div>
 </nav>
-
 <div class="container">
+    <p>
+        <span th:text="${message}"></span>
+    </p>
+    <div class="row">
+        <div class="col-md-4">
+            <form>
+                <div class="form-group">
+                    <label for="startDate">Start Date</label>
+                    <input type="date" class="form-control" id="startDate"
+                           th:value="${#dates.format(startOfWeek, 'yyyy-MM-dd')}"/>
+                </div>
+                <div class="form-group">
+                    <label for="endDate">End Date</label>
+                    <input type="date" class="form-control" id="endDate"
+                           th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"/>
+                </div>
+                <button id="submitButton" type="button" class="btn btn-primary" onclick="submitGeofences()">Get load count</button>
+            </form>
+            <div><h2 id="result"></h2></div>
+        </div>
+        <div  class="col-md-8">
+            <div><p>
+            </p></div>
+            <div id="mapid" style=" height: 500px;"></div></div>
 
-    <div class="starter-template">
-        <h1>Dempsey Wood Load Counting Demo</h1>
-        <h2>
-            <span th:text="'Message: ' + ${message}"></span>
-        </h2>
     </div>
-    <div id="mapid" style="width: 600px; height: 400px;"></div>
+
 
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="zoneDetailDialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Zone Attributes</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="zoneName">Zone name</label>
+                    <input type="text" class="form-control" id="zoneName" placeholder="Zone name"/>
+                </div>
+                <div class="form-group">
+                    <label for="material">Material</label>
+                    <input type="text" class="form-control" id="material" placeholder="Material"/>
+                </div>
+                <div class="form-group">
+                    <label class="radio-inline"><input type="radio" name="zoneType" value="Loading zone"/>Loading zone</label>
+                    <label class="radio-inline"><input type="radio" name="zoneType" value="Dumping zone"/>Dumping zone</label>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="okButton">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- /.container -->
-<script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
-        integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
-        crossorigin=""></script>
-<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
-<script type="text/javascript"
-        src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script th:inline="javascript">
 /*<![CDATA[*/
 
 var coordinates = [[${coordinates}]];
 
 /*]]>*/
+
+
+
+
 </script>
-<script type="text/javascript" th:src="@{/js/lib/Leaflet.draw.js}" />
-<script type="text/javascript" th:src="@{/js/src/dw.js}" />
+
+<script type="text/javascript" th:src="@{/js/src/dw.js}"/>
+<script type="text/javascript" th:src="@{/js/src/demo.js}"/>
+
 
 </body>
 </html>

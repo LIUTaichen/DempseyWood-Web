@@ -23,6 +23,15 @@ public class Reading {
     private Long heading;
     private Integer speed;
 
+    public Reading(){
+
+    }
+
+    public Reading(LatLng latLng){
+        this.lat = latLng.latitude;
+        this.lng = latLng.longitude;
+    }
+
     public Integer getId() {
         return id;
     }
