@@ -1,5 +1,6 @@
 package com.dempseywood.webservice.equipmentstatus;
 
+import com.dempseywood.entity.repository.EquipmentStatusRepository;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;

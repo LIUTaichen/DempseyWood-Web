@@ -1,4 +1,6 @@
-package com.dempseywood.navixy.tracker;
+package com.dempseywood.entity;
+
+import com.dempseywood.entity.LatLng;
 
 import javax.persistence.*;
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.dempseywood.navixy.reading;
 
-import com.dempseywood.navixy.tracker.Reading;
+import com.dempseywood.entity.Reading;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

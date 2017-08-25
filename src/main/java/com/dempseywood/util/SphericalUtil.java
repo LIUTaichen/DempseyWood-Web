@@ -1,6 +1,6 @@
 package com.dempseywood.util;
 
-import com.dempseywood.navixy.tracker.LatLng;
+import com.dempseywood.entity.LatLng;
 
 import java.util.List;
 

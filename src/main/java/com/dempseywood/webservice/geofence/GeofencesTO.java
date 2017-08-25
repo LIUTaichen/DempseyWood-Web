@@ -1,7 +1,7 @@
 package com.dempseywood.webservice.geofence;
 
-import com.dempseywood.navixy.tracker.Geofence;
-import com.dempseywood.navixy.tracker.LatLng;
+import com.dempseywood.entity.Geofence;
+import com.dempseywood.entity.LatLng;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ public class GeofencesTO {
     private Integer size;
     private List<LatLng> latlngs;
     private String material;
-    private String zoneTye;
+    private String zoneType;
     private String zoneName;
 
 
@@ -58,12 +58,12 @@ public class GeofencesTO {
         this.material = material;
     }
 
-    public String getZoneTye() {
-        return zoneTye;
+    public String getZoneType() {
+        return zoneType;
     }
 
-    public void setZoneTye(String zoneTye) {
-        this.zoneTye = zoneTye;
+    public void setZoneType(String zoneType) {
+        this.zoneType = zoneType;
     }
 
     public String getZoneName() {

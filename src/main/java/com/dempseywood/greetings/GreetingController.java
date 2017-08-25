@@ -2,9 +2,8 @@ package com.dempseywood.greetings;
 
 import com.dempseywood.navixy.AuthResult;
 import com.dempseywood.navixy.reading.Response;
-import com.dempseywood.navixy.tracker.Reading;
-import com.dempseywood.navixy.tracker.ReadingRepository;
-import com.dempseywood.webservice.equipmentstatus.EquipmentStatusRepository;
+import com.dempseywood.entity.Reading;
+import com.dempseywood.entity.repository.ReadingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,14 +13,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;

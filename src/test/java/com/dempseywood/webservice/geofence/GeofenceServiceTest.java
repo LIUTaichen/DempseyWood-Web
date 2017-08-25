@@ -1,8 +1,8 @@
 package com.dempseywood.webservice.geofence;
 
-import com.dempseywood.navixy.tracker.Geofence;
-import com.dempseywood.navixy.tracker.LatLng;
-import com.dempseywood.navixy.tracker.Reading;
+import com.dempseywood.entity.Geofence;
+import com.dempseywood.entity.LatLng;
+import com.dempseywood.entity.Reading;
 import org.junit.Before;
 import org.junit.Test;
 

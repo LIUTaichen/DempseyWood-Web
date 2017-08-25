@@ -9,10 +9,6 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=p
 	}).addTo(map);
 //alert(coordinates.length);
 
-var polyline = L.polyline(coordinates, {color: 'red'}).addTo(map);
-//var polyline = L.polyline(latlngs, {color: 'red'}).addTo(mymap);
-// zoom the map to the polyline
-map.fitBounds(polyline.getBounds());
 
  function display(data){
    console.log(data);
@@ -92,9 +88,10 @@ var count = 1;
 
     drawnItems.addLayer(layer);
     map.addLayer(layer);
-    layer.bindTooltip(props.zoneName,
-              {permanent: true, direction:"center"}
-             ).openTooltip()
+    layer.setStyle({fillColor:'#FF0000'});
+   layer.bindTooltip(props.zoneName,
+                 {permanent: true, direction:"center"}
+                ).openTooltip();
     addPopup(layer);
 
    });
@@ -102,20 +99,26 @@ var count = 1;
 
    function addPopup(layer) {
    layer.on('click', function() {
+
+
+
             if(isDetailDialogEnabled){
           $('#material').val(layer.feature.properties.material);
           $('#zoneName').val(layer.feature.properties.zoneName);
            $("input[name='zoneType'][value='" + layer.feature.properties.zoneType + "']").prop('checked', true);
-
-           $('#okButton').on('click', function () {
+             $('#okButton').off('click.temp');
+           $('#okButton').on('click.temp', function () {
            console.log("closing modal, saving details ");
             layer.feature.properties.material =  $('#material').val();
             layer.feature.properties.zoneName =  $('#zoneName').val();
+            layer.setTooltipContent(layer.feature.properties.zoneName);
             layer.feature.properties.zoneType =  $("input[name='zoneType']:checked").val();
               console.log( layer.feature.properties);
               if(layer.feature.properties.zoneType == 'Dumping zone'){
               console.log(layer);
-                    layer.setStyle({fillColor:'#5FE828'});
+                    layer.setStyle({fillColor:'#90EE90'});
+              }else{
+                    layer.setStyle({fillColor:'#FF0000'});
               }
            })
 
@@ -124,6 +127,10 @@ var count = 1;
            });
 
    }
+    //hides popover when the draw polygon button is first clicked
+    map.on('draw:drawstart', function (e) {
+     $(".leaflet-draw-draw-polygon").popover("hide");
+    });
 map.on('draw:deletestart', function(event){
     isDetailDialogEnabled = false;
     console.log("on click function disabled");
@@ -188,3 +195,98 @@ $.ajax({
 
    });
 }
+
+
+function submitGeofencesForTesting(){
+console.log("sending geofences to server");
+    var geofences = [];
+    drawnItems.eachLayer(function (layer){
+    console.log(layer);
+    var geofence = new Object();
+    geofence.latlngs = layer.getLatLngs()[0];
+    for(var k in layer.feature.properties) geofence[k]=layer.feature.properties[k];
+    geofence.properties = layer.feature.properties;
+    console.log(geofence);
+    geofences.push(geofence);
+    })
+console.log(geofences);
+    getLoadCountForTest(geofences);
+
+
+
+}
+
+function getLoadCountForTest(data){
+$.ajax({
+       type: "POST",
+       url: "/geofence/test",
+       data: JSON.stringify(data),
+       contentType: "application/json; charset=utf-8",
+       dataType: "json",
+
+
+   }).then(function (data){
+    console.log(data);
+
+   });
+}
+
+$(function() {
+      var drawButton =  $(".leaflet-draw-draw-polygon");
+  drawButton.attr("data-toggle", "popover");
+   drawButton.attr("data-placement", "right");
+    drawButton.attr("data-container", "body");
+     drawButton.attr("data-trigger", "manual");
+   drawButton.attr("data-content", "Click here to start defining loading and dumping zones");
+   drawButton.attr("title","");
+    drawButton.popover();
+    drawButton.popover("show");
+    drawButton.attr("data-trigger", "hover");
+
+});
+
+function drawTracks(){
+    //var downloadedTracks =
+
+
+}
+var polylines = [];
+function loadTracksFromServer(){
+        for(index in polylines){
+            map.removeLayer(polylines[index]);
+        }
+         polylines = [];
+       $.ajax({
+              type: "GET",
+              url: "/geofence/tracks",
+              data: {
+              "startDateString" : $('#startDate').val(),
+              "endDateString" : $('#endDate').val()
+              },
+              contentType: "application/json; charset=utf-8",
+              dataType: "json",
+
+          }).then(function (data){
+           console.log(data);
+           for (index in data){
+                   var coordinates = [];
+                   var track = data[index];
+                  for(var i = 0; i < track.readings.length; i ++){
+                  coordinates[i] = [track.readings[i].lat, track.readings[i].lng];
+                  }
+                 console.log(coordinates);
+                 var polyline = L.polyline(coordinates, {color: 'red'}).addTo(map);
+                polylines.push(polyline);
+           }
+           //var polyline = L.polyline(latlngs, {color: 'red'}).addTo(mymap);s
+           // zoom the map to the polyline
+           if(polylines.length != 0){
+           map.fitBounds(polyline.getBounds());
+            }
+          });
+
+
+}
+
+loadTracksFromServer();
+

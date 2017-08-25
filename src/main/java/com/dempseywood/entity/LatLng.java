@@ -1,4 +1,6 @@
-package com.dempseywood.navixy.tracker;
+package com.dempseywood.entity;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +12,9 @@ public class LatLng {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
+    @JsonProperty("lat")
     public  Double latitude;
+    @JsonProperty("lng")
     public Double longitude;
 
     public LatLng(){

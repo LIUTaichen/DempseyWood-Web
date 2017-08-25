@@ -26,13 +26,18 @@
 </head>
 <body>
 
-<nav class="navbar navbar-inverse">
+<nav class="navbar  navbar-static-top ">
+
     <div class="container">
+
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">Dempsey Wood</a>
+            <a class="navbar-brand" href="#" id="navbar-brand">
+                <img  th:src="@{/images/dw-logo-full.svg}" />
+            </a>
+
         </div>
         <div id="navbar" class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
+            <ul class="nav navbar-nav navbar-right">
                 <li class="active"><a href="#">Home</a></li>
                 <li><a href="#about">About</a></li>
             </ul>
@@ -48,15 +53,17 @@
             <form>
                 <div class="form-group">
                     <label for="startDate">Start Date</label>
-                    <input type="date" class="form-control" id="startDate"
-                           th:value="${#dates.format(startOfWeek, 'yyyy-MM-dd')}"/>
+                    <input type="date" class="form-control" id="startDate" onchange="loadTracksFromServer()"
+                           th:value="${#dates.format(startOfWeek, 'yyyy-MM-dd')}" th:max="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"/>
                 </div>
                 <div class="form-group">
                     <label for="endDate">End Date</label>
                     <input type="date" class="form-control" id="endDate"
-                           th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"/>
+                           th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" onchange="loadTracksFromServer()"
+                           th:max="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"/>
                 </div>
                 <button id="submitButton" type="button" class="btn btn-primary" onclick="submitGeofences()">Get load count</button>
+                <button id="testButton" type="button" class="btn btn-primary" onclick="submitGeofencesForTesting()" style="display:none">Send Test data</button>
             </form>
             <div><h2 id="result"></h2></div>
         </div>
@@ -104,7 +111,7 @@
 <script th:inline="javascript">
 /*<![CDATA[*/
 
-var coordinates = [[${coordinates}]];
+var tracks = [[${tracks}]];
 
 /*]]>*/
 

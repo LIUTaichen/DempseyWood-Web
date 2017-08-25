@@ -1,0 +1,16 @@
+#navbar-brand {
+    height : 61px;
+}
+
+.nav >li >a {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+.leaflet-marker-icon.leaflet-div-icon.leaflet-editing-icon.leaflet-zoom-animated.leaflet-interactive{
+
+width :8px !important;
+height:8px !important;
+margin-left: -4px !important;
+margin-top: -4px !important;
+}

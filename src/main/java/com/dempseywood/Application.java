@@ -45,7 +45,7 @@ public class Application {
         loggingFilter.setIncludeClientInfo(true);
         loggingFilter.setIncludeQueryString(true);
         loggingFilter.setIncludePayload(true);
-        loggingFilter.setMaxPayloadLength(500);
+        loggingFilter.setMaxPayloadLength(5000);
         return loggingFilter;
     }
 

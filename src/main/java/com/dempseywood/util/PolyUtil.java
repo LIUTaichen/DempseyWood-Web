@@ -1,7 +1,7 @@
 package com.dempseywood.util;
 
 
-import com.dempseywood.navixy.tracker.LatLng;
+import com.dempseywood.entity.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +82,9 @@ public class PolyUtil {
      * (loxodromic) segments otherwise.
      */
     public static boolean containsLocation(double latitude, double longitude, List<LatLng> polygon, boolean geodesic) {
+        if(polygon == null  ){
+            return false;
+        }
         final int size = polygon.size();
         if (size == 0) {
             return false;

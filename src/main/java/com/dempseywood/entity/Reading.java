@@ -1,6 +1,7 @@
-package com.dempseywood.navixy.tracker;
+package com.dempseywood.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,11 +18,13 @@ public class Reading {
     private Double lng;
     private String address;
     private Integer satellites;
+    @JsonProperty("get_time")
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
-    private Date get_time;
+    private Date time;
     private Long mileage;
     private Long heading;
     private Integer speed;
+    private Integer trackId;
 
     public Reading(){
 
@@ -80,12 +83,12 @@ public class Reading {
         this.satellites = satellites;
     }
 
-    public Date getGet_time() {
-        return get_time;
+    public Date getTime() {
+        return time;
     }
 
-    public void setGet_time(Date get_time) {
-        this.get_time = get_time;
+    public void setTime(Date time) {
+        this.time = time;
     }
 
     public Long getMileage() {
@@ -112,4 +115,11 @@ public class Reading {
         this.speed = speed;
     }
 
+    public Integer getTrackId() {
+        return trackId;
+    }
+
+    public void setTrackId(Integer trackId) {
+        this.trackId = trackId;
+    }
 }
