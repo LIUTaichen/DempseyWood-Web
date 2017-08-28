@@ -1,45 +1,48 @@
 package com.dempseywood.webservice.geofence;
 
+import com.dempseywood.entity.Equipment;
+import com.dempseywood.entity.Geofence;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LoadCount {
-    private String vehicle;
-    private GeofencesTO loadingZone;
-    private GeofencesTO dumpingZone;
+public class Trip {
+    private Equipment vehicle;
+    private Geofence loadingZone;
+    private Geofence dumpingZone;
     private Date time;
-    public LoadCount() {
+    public Trip() {
 
     }
-    public LoadCount(GeofencesTO loadingZone, GeofencesTO dumpingZone, Date time, String vehicle) {
+    public Trip(Geofence loadingZone, Geofence dumpingZone, Date time, Equipment vehicle) {
         this.loadingZone = loadingZone;
         this.dumpingZone = dumpingZone;
         this.time = time;
         this.vehicle = vehicle;
     }
 
-    public String getVehicle() {
+    public Equipment getVehicle() {
         return vehicle;
     }
 
-    public void setVehicle(String vehicle) {
+    public void setVehicle(Equipment vehicle) {
         this.vehicle = vehicle;
     }
 
-    public GeofencesTO getLoadingZone() {
+    public Geofence getLoadingZone() {
         return loadingZone;
     }
 
-    public void setLoadingZone(GeofencesTO loadingZone) {
+    public void setLoadingZone(Geofence loadingZone) {
         this.loadingZone = loadingZone;
     }
 
-    public GeofencesTO getDumpingZone() {
+    public Geofence getDumpingZone() {
         return dumpingZone;
     }
 
-    public void setDumpingZone(GeofencesTO dumpingZone) {
+    public void setDumpingZone(Geofence dumpingZone) {
         this.dumpingZone = dumpingZone;
     }
 

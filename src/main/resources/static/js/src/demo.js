@@ -1,4 +1,4 @@
-
+//Initializing map
 var map = L.map('mapid').setView([-36.914827,174.8072903], 13);
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiamFzb25saXV0YWljaGVuIiwiYSI6ImNqNmZ5ZGpkcjAzYWIzNXA1aWs5OXF3bXcifQ.33nis-JWUXYo1jpJkr1OSQ', {
 		maxZoom: 18,
@@ -7,22 +7,9 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=p
 			'Imagery © <a href="http://mapbox.com">Mapbox</a>',
 		id: 'mapbox.streets'
 	}).addTo(map);
-//alert(coordinates.length);
-
-
- function display(data){
-   console.log(data);
-   alert(data);
-   }
-
-var geofences = new Object();
-geofences.size = 0;
-
-
 
 var drawnItems = L.geoJson().addTo(map);
 map.addLayer(drawnItems);
-
 var drawControl = new L.Control.Draw({
  draw: {
           polyline: false,
@@ -40,97 +27,61 @@ var drawControl = new L.Control.Draw({
 });
 
 map.addControl(drawControl);
-
-
-  map.on('draw:edited', function (e) {
-      var layers = e.layers;
-      layers.eachLayer(function (layer) {
-          //do whatever you want; most likely save back to db
-      });
-  });
 var isDetailDialogEnabled = true;
-
 var count = 1;
+var polylines = [];
+loadTracksFromServer();
 
-   map.on('draw:created', function (e) {
-     var type = e.layerType;
-     var layer = e.layer;
-     var feature = layer.feature = layer.feature || {};
-     feature.type = feature.type || "Feature";
-     var props = feature.properties = feature.properties || {};
-                     //layer.feature = {properties: {}}; // No need to convert to GeoJSON.
-     props.material = 'Top soil';
-     props.zoneName = 'Zone '+ count++;
-     props.zoneType = 'Loading zone';
+map.on('draw:editstart', function(event){
+    isDetailDialogEnabled = false;
+    console.log("on click function disabled");
+});
+map.on('draw:editstop', function(event){
+    isDetailDialogEnabled = true;
+    console.log("on click function enabled");
+})
 
-      var latLngs = layer.getLatLngs()[0];
-      var vertices = [];
-      console.log(latLngs);
-      console.log(latLngs.length);
-      for(var i = 0; i < latLngs.length; i ++ ){
-           vertices.push(new Object());
-          vertices[i].latitude =  latLngs[i].lat;
-          vertices[i].longitude =  latLngs[i].lng;
-      }
-      console.log(vertices);
-        if( !geofences.hasOwnProperty("load")){
-            var loadingFence = new Object();
-            loadingFence.vertices = vertices;
-            geofences.load = loadingFence;
-            console.log("loading area specified");
-        }else if( !geofences.hasOwnProperty("dump")){
-             var dumpingFence = new Object();
-            dumpingFence.vertices = vertices;
-            geofences.dump = dumpingFence;
-            console.log("dumping area specified");
-        }
-         //postLats(latLngs[0], display);
+map.on('draw:edited', function (e) {
+    var layers = e.layers;
+    var layerArray = [];
+    layers.eachLayer(function (layer) {
+        console.log(layer);
+        layer.unbindTooltip();
+        //do whatever you want; most likely save back to db
+        layer.bindTooltip(layer.feature.properties.zoneName,
+        {permanent: true, direction:"center"}
+        ).openTooltip();
+        layerArray.push(layer);
+    });
+    updateFence(layerArray);
+});
+
+
+map.on('draw:created', function (e) {
+    var type = e.layerType;
+    var layer = e.layer;
+    var feature = layer.feature = layer.feature || {};
+    feature.type = feature.type || "Feature";
+    var props = feature.properties = feature.properties || {};
+    //layer.feature = {properties: {}}; // No need to convert to GeoJSON.
+    props.material = 'Top soil';
+    props.zoneName = 'Zone '+ count++;
+    props.zoneType = 'Loading zone';
 
     drawnItems.addLayer(layer);
     map.addLayer(layer);
     layer.setStyle({fillColor:'#FF0000'});
-   layer.bindTooltip(props.zoneName,
-                 {permanent: true, direction:"center"}
-                ).openTooltip();
+    layer.bindTooltip(props.zoneName,
+    {permanent: true, direction:"center"}
+    ).openTooltip();
     addPopup(layer);
+    addNewFence(layer);
+});
 
-   });
-
-
-   function addPopup(layer) {
-   layer.on('click', function() {
-
-
-
-            if(isDetailDialogEnabled){
-          $('#material').val(layer.feature.properties.material);
-          $('#zoneName').val(layer.feature.properties.zoneName);
-           $("input[name='zoneType'][value='" + layer.feature.properties.zoneType + "']").prop('checked', true);
-             $('#okButton').off('click.temp');
-           $('#okButton').on('click.temp', function () {
-           console.log("closing modal, saving details ");
-            layer.feature.properties.material =  $('#material').val();
-            layer.feature.properties.zoneName =  $('#zoneName').val();
-            layer.setTooltipContent(layer.feature.properties.zoneName);
-            layer.feature.properties.zoneType =  $("input[name='zoneType']:checked").val();
-              console.log( layer.feature.properties);
-              if(layer.feature.properties.zoneType == 'Dumping zone'){
-              console.log(layer);
-                    layer.setStyle({fillColor:'#90EE90'});
-              }else{
-                    layer.setStyle({fillColor:'#FF0000'});
-              }
-           })
-
-          $('#zoneDetailDialog').modal({'show' : true, backdrop:'static', keyboard:false});
-          }
-           });
-
-   }
-    //hides popover when the draw polygon button is first clicked
-    map.on('draw:drawstart', function (e) {
-     $(".leaflet-draw-draw-polygon").popover("hide");
-    });
+//hides popover when the draw polygon button is first clicked
+map.on('draw:drawstart', function (e) {
+    $(".leaflet-draw-draw-polygon").popover("hide");
+});
 map.on('draw:deletestart', function(event){
     isDetailDialogEnabled = false;
     console.log("on click function disabled");
@@ -139,154 +90,241 @@ map.on('draw:deletestop', function(event){
     isDetailDialogEnabled = true;
     console.log("on click function enabled");
 });
+map.on('draw:deleted', function(event){
+    var layers = event.layers;
+    console.log(layers);
+    console.log(event);
+    var layerArray = [];
+    layers.eachLayer(function (layer) {
+        console.log(layer);
+        layerArray.push(layer);
+    });
+    deleteFences(layerArray);
+});
 
-function postGeofences(data){
-postLats(data, display);
+doAjax("/geofence", "GET", null, function (data){
+    for(index in data){
+        var fence = data[index];
+        console.log(fence);
+        var polygon = L.polygon(fence.vertices).addTo(map);
+        drawnItems.addLayer(polygon);
+        polygon.feature = {};
+        polygon.feature.properties = {};
+        polygon.feature.properties.zoneName = fence.zoneName;
+        polygon.feature.properties.id = fence.id;
+        polygon.feature.properties.material = fence.material;
+        polygon.feature.properties.zoneType = fence.zoneType;
+        if(polygon.feature.properties.zoneType == 'Dumping zone'){
+            console.log(polygon);
+            polygon.setStyle({fillColor:'#90EE90'});
+        }else{
+            polygon.setStyle({fillColor:'#FF0000'});
+        }
+        polygon.bindTooltip(polygon.feature.properties.zoneName,
+        {permanent: true, direction:"center"}
+        ).openTooltip();
+        addPopup(polygon);
+    }
+});
+
+//functions
+
+/*
+add a onlick function on each layer.
+this function opens the zone details modal dialog if the map is not in a edit or delete session
+pulls details from the layer object and populate the dialog form with them
+when OK button is clicked, save the form input back to the layer object, as well as update the database
+*/
+function addPopup(layer) {
+    layer.on('click', function() {
+        if(isDetailDialogEnabled){
+            $('#material').val(layer.feature.properties.material);
+            $('#zoneName').val(layer.feature.properties.zoneName);
+            $("input[name='zoneType'][value='" + layer.feature.properties.zoneType + "']").prop('checked', true);
+            $('#okButton').off('click.temp');
+            $('#okButton').on('click.temp', function () {
+                console.log("closing modal, saving details ");
+                layer.feature.properties.material =  $('#material').val();
+                layer.feature.properties.zoneName =  $('#zoneName').val();
+                layer.setTooltipContent(layer.feature.properties.zoneName);
+                layer.feature.properties.zoneType =  $("input[name='zoneType']:checked").val();
+                console.log( layer.feature.properties);
+                if(layer.feature.properties.zoneType == 'Dumping zone'){
+                    console.log(layer);
+                    layer.setStyle({fillColor:'#90EE90'});
+                }else{
+                    layer.setStyle({fillColor:'#FF0000'});
+                }
+                var layers = [];
+                layers.push(layer);
+                updateFence(layers);
+            })
+            $('#zoneDetailDialog').modal({'show' : true, backdrop:'static', keyboard:false});
+        }
+    });
 }
 
-function postLats(lats, callbackfn){
-    $.ajax({
-       type: "POST",
-       url: "/geofence",
-       data: JSON.stringify(lats),
-       contentType: "application/json; charset=utf-8",
-       dataType: "json",
+function addNewFence(layer){
+    var geofence = getObjectFromLayer(layer);
 
+    doAjax("/geofence" , "POST", geofence, function( data){
+        console.log(layer);
+        console.log(data);
+        layer.feature.properties.id = data.id;
+    });
+}
+function getObjectFromLayer(layer){
+    var geofence = new Object();
+    console.log(layer);
+    geofence.vertices = layer.getLatLngs()[0];
+    console.log(layer);
+    for(var k in layer.feature.properties) geofence[k]=layer.feature.properties[k];
+    return geofence;
+}
+function updateFence(layers){
+    var geofences = [];
+    for(index in layers){
+    var geofence = getObjectFromLayer(layers[index]);
 
-   }).then(function (data){
-    console.log(data);
-    var oldText =  $( "#result" ).text();
-    var newText = oldText + data.content;
-     $( "#result" ).text(newText);
+    geofences.push(geofence)
+    }
+    doAjax("/geofence" , "PUT", geofences , function(data){
+        console.log(data);
+    });
+}
 
-   });
+function deleteFences(layers){
+    var geofences = [];
+    for(index in layers){
+        var geofence = getObjectFromLayer(layers[index]);
+
+        geofences.push(geofence)
+    }
+    doAjax("/geofence" , "DELETE", geofences , function(data){
+        console.log(data);
+    });
 }
 
 function submitGeofences(){
-console.log("sending geofences to server");
+    console.log("sending geofences to server");
     var geofences = [];
     drawnItems.eachLayer(function (layer){
-    console.log(layer);
-    var geofence = new Object();
-    geofence.latlngs = layer.getLatLngs()[0];
-    for(var k in layer.feature.properties) geofence[k]=layer.feature.properties[k];
-    geofence.properties = layer.feature.properties;
-    console.log(geofence);
-    geofences.push(geofence);
+        console.log(layer);
+        var geofence = new Object();
+        geofence.latlngs = layer.getLatLngs()[0];
+        for(var k in layer.feature.properties) geofence[k]=layer.feature.properties[k];
+        console.log(geofence);
+        geofences.push(geofence);
     })
-console.log(geofences);
+    console.log(geofences);
     getLoadCount(geofences);
 }
 
 function getLoadCount(data){
-$.ajax({
-       type: "POST",
-       url: "/geofence",
-       data: JSON.stringify(data),
-       contentType: "application/json; charset=utf-8",
-       dataType: "json",
-
-
-   }).then(function (data){
-    console.log(data);
-    var oldText =  "Number of Loads completed: ";
-    var newText = oldText + data.content;
-     $( "#result" ).text(newText);
-
-   });
+    $.ajax({
+        type: "POST",
+        url: "/geofence/loadcount",
+        data: JSON.stringify(data),
+        contentType: "application/json; charset=utf-8",
+        dataType: "html",
+    }).fail(function(error){
+        console.log(error);
+    })
+    .then(function (data){
+        console.log(data);
+        $('#loadCountTable').html(data);
+    });
 }
 
 
 function submitGeofencesForTesting(){
-console.log("sending geofences to server");
+    console.log("sending geofences to server");
     var geofences = [];
     drawnItems.eachLayer(function (layer){
-    console.log(layer);
-    var geofence = new Object();
-    geofence.latlngs = layer.getLatLngs()[0];
-    for(var k in layer.feature.properties) geofence[k]=layer.feature.properties[k];
-    geofence.properties = layer.feature.properties;
-    console.log(geofence);
-    geofences.push(geofence);
+        console.log(layer);
+        var geofence = new Object();
+        geofence.latlngs = layer.getLatLngs()[0];
+        for(var k in layer.feature.properties) geofence[k]=layer.feature.properties[k];
+        geofence.properties = layer.feature.properties;
+        console.log(geofence);
+        geofences.push(geofence);
     })
-console.log(geofences);
+    console.log(geofences);
     getLoadCountForTest(geofences);
-
-
-
 }
 
 function getLoadCountForTest(data){
-$.ajax({
-       type: "POST",
-       url: "/geofence/test",
-       data: JSON.stringify(data),
-       contentType: "application/json; charset=utf-8",
-       dataType: "json",
-
-
-   }).then(function (data){
-    console.log(data);
-
-   });
+    $.ajax({
+        type: "POST",
+        url: "/geofence/test",
+        data: JSON.stringify(data),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+    }).then(function (data){
+        console.log(data);
+    });
 }
 
 $(function() {
-      var drawButton =  $(".leaflet-draw-draw-polygon");
-  drawButton.attr("data-toggle", "popover");
-   drawButton.attr("data-placement", "right");
+    var drawButton =  $(".leaflet-draw-draw-polygon");
+    drawButton.attr("data-toggle", "popover");
+    drawButton.attr("data-placement", "right");
     drawButton.attr("data-container", "body");
-     drawButton.attr("data-trigger", "manual");
-   drawButton.attr("data-content", "Click here to start defining loading and dumping zones");
-   drawButton.attr("title","");
+    drawButton.attr("data-trigger", "manual");
+    drawButton.attr("data-content", "Click here to start defining loading and dumping zones");
+    drawButton.attr("title","");
     drawButton.popover();
     drawButton.popover("show");
     drawButton.attr("data-trigger", "hover");
-
 });
 
-function drawTracks(){
-    //var downloadedTracks =
-
-
-}
-var polylines = [];
 function loadTracksFromServer(){
-        for(index in polylines){
-            map.removeLayer(polylines[index]);
+    for(index in polylines){
+        map.removeLayer(polylines[index]);
+    }
+    polylines = [];
+    $.ajax({
+        type: "GET",
+        url: "/geofence/tracks",
+        data: {
+        "startDateString" : $('#startDate').val(),
+        "endDateString" : $('#endDate').val()
+    },
+    contentType: "application/json; charset=utf-8",
+    dataType: "json",
+
+    }).then(function (data){
+        console.log(data);
+        for (index in data){
+            var coordinates = [];
+            var track = data[index];
+            for(var i = 0; i < track.readings.length; i ++){
+                coordinates[i] = [track.readings[i].lat, track.readings[i].lng];
         }
-         polylines = [];
-       $.ajax({
-              type: "GET",
-              url: "/geofence/tracks",
-              data: {
-              "startDateString" : $('#startDate').val(),
-              "endDateString" : $('#endDate').val()
-              },
-              contentType: "application/json; charset=utf-8",
-              dataType: "json",
-
-          }).then(function (data){
-           console.log(data);
-           for (index in data){
-                   var coordinates = [];
-                   var track = data[index];
-                  for(var i = 0; i < track.readings.length; i ++){
-                  coordinates[i] = [track.readings[i].lat, track.readings[i].lng];
-                  }
-                 console.log(coordinates);
-                 var polyline = L.polyline(coordinates, {color: 'red'}).addTo(map);
-                polylines.push(polyline);
-           }
-           //var polyline = L.polyline(latlngs, {color: 'red'}).addTo(mymap);s
-           // zoom the map to the polyline
-           if(polylines.length != 0){
-           map.fitBounds(polyline.getBounds());
-            }
-          });
-
-
+        console.log(coordinates);
+            var polyline = L.polyline(coordinates, {color: 'red'}).addTo(map);
+            polylines.push(polyline);
+    }
+    //var polyline = L.polyline(latlngs, {color: 'red'}).addTo(mymap);s
+    // zoom the map to the polyline
+        if(polylines.length != 0){
+            map.fitBounds(polyline.getBounds());
+        }
+    });
 }
 
-loadTracksFromServer();
 
+function doAjax(url, method, payload, callback){
+    $.ajax({
+        type: method,
+        url: url,
+        data: JSON.stringify(payload),
+        contentType: "application/json; charset=utf-8",
+    }).fail(function(error){
+        console.log(error);
+    })
+    .then(function (data){
+        console.log(data);
+        callback(data);
+    });
+}

@@ -1,9 +1,10 @@
 package com.dempseywood.webservice.geofence;
 
 
-import com.dempseywood.entity.Geofence;
-import com.dempseywood.entity.LatLng;
-import com.dempseywood.entity.Reading;
+import com.dempseywood.entity.*;
+import com.dempseywood.entity.repository.EquipmentRepository;
+import com.dempseywood.entity.repository.TrackerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static  com.dempseywood.util.PolyUtil.*;
@@ -20,6 +21,11 @@ public class GeofenceService {
     private final Integer LOADING = 1;
     private final Integer LOADED = 2;
     private final Integer UNLOADING = 3;
+
+    @Autowired
+    private EquipmentRepository equipmentRepository;
+    @Autowired
+    private TrackerRepository trackerRepository;
 
 
     public Integer getNumberOfTrips(Geofence loadingArea, Geofence dumpingArea, List<Reading> track) {
@@ -53,14 +59,14 @@ public class GeofenceService {
 
     }
 
-    public List<LoadCount> getLoadCounts(List<GeofencesTO> geofences, List<Reading> track) {
-        List<LoadCount> loadCounts = new ArrayList<LoadCount>();
+    public List<Trip> getLoadCounts(List<Geofence> geofences, List<Reading> track) {
+        List<Trip> trips = new ArrayList<Trip>();
         TruckStatus status = TruckStatus.UNLOADED;
-        GeofencesTO currentLoadingZone = new GeofencesTO();
-        GeofencesTO currentDumpingZone = new GeofencesTO();
+        Geofence currentLoadingZone = new Geofence();
+        Geofence currentDumpingZone = new Geofence();
 
-        List<GeofencesTO> loadingZones = new ArrayList<GeofencesTO>();
-        List<GeofencesTO> dumpingZones = new ArrayList<GeofencesTO>();
+        List<Geofence> loadingZones = new ArrayList<Geofence>();
+        List<Geofence> dumpingZones = new ArrayList<Geofence>();
         geofences.forEach(geofence -> {
             if(geofence.getZoneType().equals(LOADING_ZONE)){
                 loadingZones.add(geofence);
@@ -68,7 +74,13 @@ public class GeofenceService {
                 dumpingZones.add(geofence);
             }
         });
-        List<GeofencesTO> activeDumpingZones = new ArrayList<GeofencesTO>();
+        List<Geofence> activeDumpingZones = new ArrayList<Geofence>();
+        Equipment vehicle = null;
+        if(!track.isEmpty()){
+            Integer trackerId = track.get(0).getTrackerId();
+            Tracker tracker = trackerRepository.findOne(trackerId);
+             vehicle = equipmentRepository.findOne(tracker.getEquipmentId());
+        }
         /*
         * assumptions : truck is unloaded at the first reading
         * truck is loaded when entering the first loading zone
@@ -80,14 +92,15 @@ public class GeofenceService {
         * */
         for (Reading reading : track) {
 
+
             switch(status){
                 case UNLOADED:
-                    for(GeofencesTO zone : loadingZones){
+                    for(Geofence zone : loadingZones){
                         if(isIn(reading, zone)) {
                             status = TruckStatus.LOADING;
                             currentLoadingZone = zone;
                             activeDumpingZones.clear();
-                            for(GeofencesTO dumpingZone : dumpingZones){
+                            for(Geofence dumpingZone : dumpingZones){
                                 if(dumpingZone.getMaterial().equals(currentLoadingZone.getMaterial())){
                                     activeDumpingZones.add(dumpingZone);
                                 }
@@ -102,11 +115,11 @@ public class GeofenceService {
                     }
                     break;
                 case LOADED:
-                    for(GeofencesTO zone : activeDumpingZones){
+                    for(Geofence zone : activeDumpingZones){
                         if (isIn(reading, zone)) {
                             status = TruckStatus.UNLOADING;
                             currentDumpingZone = zone;
-                            loadCounts.add(new LoadCount(currentLoadingZone, currentDumpingZone, reading.getTime(), reading.getTrackerId().toString() ));
+                            trips.add(new Trip(currentLoadingZone, currentDumpingZone, reading.getTime(), vehicle));
                             break;
                         }
                     }
@@ -119,7 +132,7 @@ public class GeofenceService {
             }
 
         }
-        return loadCounts;
+        return trips;
     }
 
 

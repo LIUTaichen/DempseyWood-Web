@@ -1,8 +1,11 @@
 package com.dempseywood.webservice.geofence;
 
 import com.dempseywood.entity.Geofence;
+import com.dempseywood.entity.LatLng;
 import com.dempseywood.entity.Reading;
 import com.dempseywood.entity.Track;
+import com.dempseywood.entity.repository.GeofenceRepository;
+import com.dempseywood.entity.repository.LatLngRepository;
 import com.dempseywood.entity.repository.ReadingRepository;
 import com.dempseywood.entity.repository.TrackRepository;
 import com.dempseywood.greetings.Greeting;
@@ -34,6 +37,12 @@ public class GeofenceController {
 
     @Autowired
     private TrackRepository trackRepository;
+
+    @Autowired
+    private GeofenceRepository geofenceRepository;
+
+    @Autowired
+    private LatLngRepository latLngRepository;
 
 
     @RequestMapping(path="/data", method = RequestMethod.POST,  produces = "application/json")
@@ -95,23 +104,26 @@ public class GeofenceController {
         return "welcome";
     }
 
-    @RequestMapping(method = RequestMethod.POST,  produces = "application/json")
+    @RequestMapping(path="/loadcount", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public @ResponseBody
-    Greeting getLoadCount(@RequestBody List<GeofencesTO> geofences) {
-        System.out.println("loading area: ");
-        /*geofences.getLoad().getVertices().forEach(latlng  -> System.out.println(latlng));
-        Geofence loadingArea = new Geofence();
-        loadingArea.setVertices(geofences.getLoad().getVertices());
-        System.out.println("dumping area: ");
-        geofences.getDump().getVertices().forEach(latlng  -> System.out.println(latlng));
-        Geofence dumpingArea = new Geofence();
-        dumpingArea.setVertices(geofences.getDump().getVertices());*/
-        List<LoadCount> count = service.getLoadCounts(geofences, readingRepo.findByTrackerId(9));
-        Greeting greeting = new Greeting(0, count.size() + "");
-        return greeting;
+    public
+    String getLoadCount(@RequestBody List<Geofence> geofences, Map<String, Object> model) {
+        List<Trip> counts = service.getLoadCounts(geofences, readingRepo.findByTrackerId(9));
+        LoadCounts countsEntry = null;
+        if(!counts.isEmpty()) {
+            countsEntry = new LoadCounts();
+            countsEntry.setVehicle(counts.get(0).getVehicle());
+            for (Trip trip : counts) {
+                String material = trip.getDumpingZone().getMaterial();
+                countsEntry.increment(material);
+            }
+        }
+        model.put("loadcount", countsEntry);
+        return "loadcount::resultsTable";
     }
+
+
 
     @RequestMapping(path="/test", method = RequestMethod.POST,  produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
@@ -177,6 +189,52 @@ public class GeofenceController {
         }
 
     }
+
+    @RequestMapping(method = RequestMethod.GET,  produces = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    @Transactional
+    public @ResponseBody
+    List<Geofence> getAllGeofences() {
+       log.debug("calling getAllGeofences");
+       List<Geofence> geofences = geofenceRepository.findAll();
+       return geofences;
+
+    }
+
+    @RequestMapping(method=RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    @Transactional
+    public @ResponseBody
+    Geofence createGeofence(@RequestBody Geofence geofence) {
+        log.debug("calling createGeofence");
+        log.info(geofence.getVertices().size() +"");
+        Geofence savedGeofence = geofenceRepository.save(geofence);
+        return savedGeofence;
+
+    }
+
+    @RequestMapping(method=RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @Transactional
+    public @ResponseBody
+    void updateGeofences(@RequestBody List<Geofence> geofences) {
+        log.debug("calling updateGeofences");
+        geofences.forEach(geofence -> {
+            latLngRepository.deleteByGeofenceId(geofence.getId());
+        });
+       geofenceRepository.save(geofences);
+
+    }
+
+    @RequestMapping(method=RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    @Transactional
+    public @ResponseBody
+    void deleteGeofences(@RequestBody List<Geofence> geofences) {
+        log.debug("calling deleteGeofences");
+        geofenceRepository.delete(geofences);
+    }
+
 
 
 }

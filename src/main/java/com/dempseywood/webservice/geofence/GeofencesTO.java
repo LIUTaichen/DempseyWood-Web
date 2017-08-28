@@ -8,9 +8,7 @@ import java.util.List;
 public class GeofencesTO {
     private Integer size;
     private List<LatLng> latlngs;
-    private String material;
-    private String zoneType;
-    private String zoneName;
+
 
 
 
@@ -50,27 +48,5 @@ public class GeofencesTO {
         this.latlngs = latlngs;
     }
 
-    public String getMaterial() {
-        return material;
-    }
 
-    public void setMaterial(String material) {
-        this.material = material;
-    }
-
-    public String getZoneType() {
-        return zoneType;
-    }
-
-    public void setZoneType(String zoneType) {
-        this.zoneType = zoneType;
-    }
-
-    public String getZoneName() {
-        return zoneName;
-    }
-
-    public void setZoneName(String zoneName) {
-        this.zoneName = zoneName;
-    }
 }
