@@ -9,4 +9,5 @@ import java.util.List;
 public interface GeofenceRepository extends CrudRepository<Geofence, Integer> {
     public List<Geofence> findAll();
 
+    public List<Geofence> findByProjectId(Integer integer);
 }

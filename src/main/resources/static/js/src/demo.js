@@ -31,6 +31,7 @@ var isDetailDialogEnabled = true;
 var count = 1;
 var polylines = [];
 loadTracksFromServer();
+var projectId = '1';
 
 map.on('draw:editstart', function(event){
     isDetailDialogEnabled = false;
@@ -126,6 +127,23 @@ doAjax("/geofence", "GET", null, function (data){
         addPopup(polygon);
     }
 });
+//adding guiding popover
+$(function() {
+    var drawButton =  $(".leaflet-draw-draw-polygon");
+    drawButton.attr("data-toggle", "popover");
+    drawButton.attr("data-placement", "right");
+    drawButton.attr("data-container", "body");
+    drawButton.attr("data-trigger", "manual");
+    drawButton.attr("data-content", "Click here to start defining loading and dumping zones");
+    drawButton.attr("title","");
+    drawButton.popover();
+    drawButton.popover("show");
+    drawButton.attr("data-trigger", "focus");
+
+    drawButton.on('hover', function(){
+         $(".leaflet-draw-draw-polygon").popover("hide");
+    });
+});
 
 //functions
 
@@ -206,26 +224,19 @@ function deleteFences(layers){
 }
 
 function submitGeofences(){
-    console.log("sending geofences to server");
-    var geofences = [];
-    drawnItems.eachLayer(function (layer){
-        console.log(layer);
-        var geofence = new Object();
-        geofence.latlngs = layer.getLatLngs()[0];
-        for(var k in layer.feature.properties) geofence[k]=layer.feature.properties[k];
-        console.log(geofence);
-        geofences.push(geofence);
-    })
-    console.log(geofences);
-    getLoadCount(geofences);
+
+    getLoadCount();
 }
 
-function getLoadCount(data){
+function getLoadCount(){
     $.ajax({
-        type: "POST",
+        type: "GET",
         url: "/geofence/loadcount",
-        data: JSON.stringify(data),
-        contentType: "application/json; charset=utf-8",
+        data: {"startDateString" : $('#startDate').val(),
+              "endDateString" : $('#endDate').val(),
+              "projectIdString" : projectId
+              },
+         contentType: "application/json; charset=utf-8",
         dataType: "html",
     }).fail(function(error){
         console.log(error);
@@ -237,46 +248,6 @@ function getLoadCount(data){
 }
 
 
-function submitGeofencesForTesting(){
-    console.log("sending geofences to server");
-    var geofences = [];
-    drawnItems.eachLayer(function (layer){
-        console.log(layer);
-        var geofence = new Object();
-        geofence.latlngs = layer.getLatLngs()[0];
-        for(var k in layer.feature.properties) geofence[k]=layer.feature.properties[k];
-        geofence.properties = layer.feature.properties;
-        console.log(geofence);
-        geofences.push(geofence);
-    })
-    console.log(geofences);
-    getLoadCountForTest(geofences);
-}
-
-function getLoadCountForTest(data){
-    $.ajax({
-        type: "POST",
-        url: "/geofence/test",
-        data: JSON.stringify(data),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-    }).then(function (data){
-        console.log(data);
-    });
-}
-
-$(function() {
-    var drawButton =  $(".leaflet-draw-draw-polygon");
-    drawButton.attr("data-toggle", "popover");
-    drawButton.attr("data-placement", "right");
-    drawButton.attr("data-container", "body");
-    drawButton.attr("data-trigger", "manual");
-    drawButton.attr("data-content", "Click here to start defining loading and dumping zones");
-    drawButton.attr("title","");
-    drawButton.popover();
-    drawButton.popover("show");
-    drawButton.attr("data-trigger", "hover");
-});
 
 function loadTracksFromServer(){
     for(index in polylines){

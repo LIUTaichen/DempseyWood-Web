@@ -14,6 +14,8 @@ public class LatLng {
     @JsonProperty("lng")
     public Double longitude;
 
+    private Integer geofenceId;
+
     public LatLng(){
 
     }
@@ -45,5 +47,13 @@ public class LatLng {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public Integer getGeofenceId() {
+        return geofenceId;
+    }
+
+    public void setGeofenceId(Integer geofenceId) {
+        this.geofenceId = geofenceId;
     }
 }

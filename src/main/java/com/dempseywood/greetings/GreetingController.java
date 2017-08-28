@@ -42,6 +42,12 @@ public class GreetingController {
         return "welcome";
     }
 
+    @RequestMapping("/login")
+    public String login(Map<String, Object> model) {
+        model.put("message", "hello world from dw");
+        return "login";
+    }
+
 
 
     @Transactional

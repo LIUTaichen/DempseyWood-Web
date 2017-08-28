@@ -45,17 +45,17 @@ public class GeofenceController {
     private LatLngRepository latLngRepository;
 
 
-    @RequestMapping(path="/data", method = RequestMethod.POST,  produces = "application/json")
+    @RequestMapping(path = "/data", method = RequestMethod.POST, produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public @ResponseBody
     Greeting addNewEquipmentStatus(@RequestBody GeofencesTO geofences) {
         System.out.println("loading area: ");
-        geofences.getLoad().getVertices().forEach(latlng  -> System.out.println(latlng));
+        geofences.getLoad().getVertices().forEach(latlng -> System.out.println(latlng));
         Geofence loadingArea = new Geofence();
         loadingArea.setVertices(geofences.getLoad().getVertices());
         System.out.println("dumping area: ");
-        geofences.getDump().getVertices().forEach(latlng  -> System.out.println(latlng));
+        geofences.getDump().getVertices().forEach(latlng -> System.out.println(latlng));
         Geofence dumpingArea = new Geofence();
         dumpingArea.setVertices(geofences.getDump().getVertices());
         Integer count = service.getNumberOfTrips(loadingArea, dumpingArea, readingRepo.findByTrackerId(9));
@@ -64,9 +64,9 @@ public class GeofenceController {
     }
 
     @RequestMapping("/loadfromnavixy")
-    public String load(Map<String, Object> model){
+    public String load(Map<String, Object> model) {
 
-        model.put("message","Welcome to Dempsey Wood Load Counting Demo");
+        model.put("message", "Welcome to Dempsey Wood Load Counting Demo");
         Date startOfWeek = new Date();
         Calendar cal = Calendar.getInstance();
         cal.setTime(startOfWeek);
@@ -78,20 +78,20 @@ public class GeofenceController {
 
         model.put("startOfWeek", cal.getTime());
 
-        List<Reading> readingList =       readingRepo.findByTrackerIdAndTimeBetweenOrderByTime(9,cal.getTime(), new Date() );
+        List<Reading> readingList = readingRepo.findByTrackerIdAndTimeBetweenOrderByTime(9, cal.getTime(), new Date());
         List<Track> trackList = new ArrayList<Track>();
 
         Double[][] readings = new Double[readingList.size()][2];
         Track trackOfReading = null;
-        for(int i = 0; i<readingList.size() ; i++){
+        for (int i = 0; i < readingList.size(); i++) {
             trackOfReading = null;
             Reading reading = readingList.get(i);
-            for(Track track : trackList){
-                if(track.getId() == reading.getTrackId()){
+            for (Track track : trackList) {
+                if (track.getId() == reading.getTrackId()) {
                     trackOfReading = track;
                 }
             }
-            if(trackOfReading == null){
+            if (trackOfReading == null) {
                 trackOfReading = new Track();
                 trackOfReading.setId(reading.getTrackId());
                 trackList.add(trackOfReading);
@@ -104,34 +104,48 @@ public class GeofenceController {
         return "welcome";
     }
 
-    @RequestMapping(path="/loadcount", method = RequestMethod.POST)
+    @RequestMapping(path = "/loadcount", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public
-    String getLoadCount(@RequestBody List<Geofence> geofences, Map<String, Object> model) {
-        List<Trip> counts = service.getLoadCounts(geofences, readingRepo.findByTrackerId(9));
-        LoadCounts countsEntry = null;
-        if(!counts.isEmpty()) {
-            countsEntry = new LoadCounts();
-            countsEntry.setVehicle(counts.get(0).getVehicle());
-            for (Trip trip : counts) {
-                String material = trip.getDumpingZone().getMaterial();
-                countsEntry.increment(material);
+    public String getLoadCount(@RequestParam String startDateString, @RequestParam String endDateString, @RequestParam String projectIdString, Map<String, Object> model) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date startDate = sdf.parse(startDateString);
+            Date endDate = sdf.parse(endDateString);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(endDate);
+            calendar.add(Calendar.HOUR, 24);
+            calendar.add(Calendar.MILLISECOND, -1);
+            endDate = calendar.getTime();
+            List<Reading> readingList = readingRepo.findByTrackerIdAndTimeBetweenOrderByTime(9, startDate, endDate);
+
+            List<Geofence> geofences = geofenceRepository.findByProjectId(Integer.valueOf(projectIdString));
+            List<Trip> counts = service.getLoadCounts(geofences, readingList);
+            LoadCounts countsEntry = null;
+            if (!counts.isEmpty()) {
+                countsEntry = new LoadCounts();
+                countsEntry.setVehicle(counts.get(0).getVehicle());
+                for (Trip trip : counts) {
+                    String material = trip.getDumpingZone().getMaterial();
+                    countsEntry.increment(material);
+                }
             }
+            model.put("loadcount", countsEntry);
         }
-        model.put("loadcount", countsEntry);
+        catch(Exception e){
+            log.error("error", e);
+            }
         return "loadcount::resultsTable";
     }
 
 
-
-    @RequestMapping(path="/test", method = RequestMethod.POST,  produces = "application/json")
+    @RequestMapping(path = "/test", method = RequestMethod.POST, produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public @ResponseBody
     Greeting createTestData(@RequestBody List<GeofencesTO> geofences) {
         Calendar calendar = Calendar.getInstance();
-        geofences.forEach(geofence -> geofence.getLatlngs().forEach(latlng-> {
+        geofences.forEach(geofence -> geofence.getLatlngs().forEach(latlng -> {
             Reading reading = new Reading(latlng);
             reading.setTrackerId(9);
             reading.setTime(calendar.getTime());
@@ -141,48 +155,48 @@ public class GeofenceController {
         }));
 
 
-        Greeting greeting = new Greeting(0,  "okkkk");
+        Greeting greeting = new Greeting(0, "okkkk");
         return greeting;
     }
 
-    @RequestMapping(path="/tracks", method = RequestMethod.GET,  produces = "application/json")
+    @RequestMapping(path = "/tracks", method = RequestMethod.GET, produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     @Transactional
     public @ResponseBody
-    List<Track> getTracks(@RequestParam String startDateString,  @RequestParam String endDateString) {
+    List<Track> getTracks(@RequestParam String startDateString, @RequestParam String endDateString) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        try{
-        Date startDate = sdf.parse(startDateString);
-        Date endDate = sdf.parse(endDateString);
-        Calendar calendar = Calendar.getInstance();
+        try {
+            Date startDate = sdf.parse(startDateString);
+            Date endDate = sdf.parse(endDateString);
+            Calendar calendar = Calendar.getInstance();
             calendar.setTime(endDate);
             calendar.add(Calendar.HOUR, 24);
             calendar.add(Calendar.MILLISECOND, -1);
             endDate = calendar.getTime();
 
-        List<Reading > readingList =       readingRepo.findByTrackerIdAndTimeBetweenOrderByTime(9,startDate, endDate );
-        List<Track> trackList = new ArrayList<Track>();
+            List<Reading> readingList = readingRepo.findByTrackerIdAndTimeBetweenOrderByTime(9, startDate, endDate);
+            List<Track> trackList = new ArrayList<Track>();
 
-        Double[][] readings = new Double[readingList.size()][2];
-        Track trackOfReading = null;
-        for(int i = 0; i<readingList.size() ; i++){
-            trackOfReading = null;
-            Reading reading = readingList.get(i);
-            for(Track track : trackList){
-                if(track.getId() == reading.getTrackId()){
-                    trackOfReading = track;
+            Double[][] readings = new Double[readingList.size()][2];
+            Track trackOfReading = null;
+            for (int i = 0; i < readingList.size(); i++) {
+                trackOfReading = null;
+                Reading reading = readingList.get(i);
+                for (Track track : trackList) {
+                    if (track.getId() == reading.getTrackId()) {
+                        trackOfReading = track;
+                    }
                 }
+                if (trackOfReading == null) {
+                    trackOfReading = new Track();
+                    trackOfReading.setId(reading.getTrackId());
+                    trackList.add(trackOfReading);
+                }
+                trackOfReading.getReadings().add(reading);
             }
-            if(trackOfReading == null){
-                trackOfReading = new Track();
-                trackOfReading.setId(reading.getTrackId());
-                trackList.add(trackOfReading);
-            }
-            trackOfReading.getReadings().add(reading);
-        }
 
-        return trackList;}
-        catch(ParseException e){
+            return trackList;
+        } catch (ParseException e) {
             log.error("error", e);
 
             return null;
@@ -190,30 +204,30 @@ public class GeofenceController {
 
     }
 
-    @RequestMapping(method = RequestMethod.GET,  produces = "application/json")
+    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     @Transactional
     public @ResponseBody
     List<Geofence> getAllGeofences() {
-       log.debug("calling getAllGeofences");
-       List<Geofence> geofences = geofenceRepository.findAll();
-       return geofences;
+        log.debug("calling getAllGeofences");
+        List<Geofence> geofences = geofenceRepository.findAll();
+        return geofences;
 
     }
 
-    @RequestMapping(method=RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public @ResponseBody
     Geofence createGeofence(@RequestBody Geofence geofence) {
         log.debug("calling createGeofence");
-        log.info(geofence.getVertices().size() +"");
+        log.info(geofence.getVertices().size() + "");
         Geofence savedGeofence = geofenceRepository.save(geofence);
         return savedGeofence;
 
     }
 
-    @RequestMapping(method=RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.ACCEPTED)
     @Transactional
     public @ResponseBody
@@ -222,11 +236,11 @@ public class GeofenceController {
         geofences.forEach(geofence -> {
             latLngRepository.deleteByGeofenceId(geofence.getId());
         });
-       geofenceRepository.save(geofences);
+        geofenceRepository.save(geofences);
 
     }
 
-    @RequestMapping(method=RequestMethod.DELETE)
+    @RequestMapping(method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     @Transactional
     public @ResponseBody
@@ -234,7 +248,6 @@ public class GeofenceController {
         log.debug("calling deleteGeofences");
         geofenceRepository.delete(geofences);
     }
-
 
 
 }
