@@ -68,6 +68,7 @@ map.on('draw:created', function (e) {
     props.material = 'Top soil';
     props.zoneName = 'Zone '+ count++;
     props.zoneType = 'Loading zone';
+    props.projectId = projectId;
 
     drawnItems.addLayer(layer);
     map.addLayer(layer);

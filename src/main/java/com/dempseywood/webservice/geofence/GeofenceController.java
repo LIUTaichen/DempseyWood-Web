@@ -210,7 +210,7 @@ public class GeofenceController {
     public @ResponseBody
     List<Geofence> getAllGeofences() {
         log.debug("calling getAllGeofences");
-        List<Geofence> geofences = geofenceRepository.findAll();
+        List<Geofence> geofences = geofenceRepository.findByProjectId(1);
         return geofences;
 
     }
