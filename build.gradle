@@ -42,6 +42,9 @@ dependencies {
     compile("com.fasterxml.jackson.module:jackson-module-parameter-names")
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jdk8")
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    
+    //security
+    compile("org.springframework.boot:spring-boot-starter-security")
 
     //email
     compile("org.springframework.boot:spring-boot-starter-mail")
