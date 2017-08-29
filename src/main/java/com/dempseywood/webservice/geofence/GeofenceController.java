@@ -66,7 +66,6 @@ public class GeofenceController {
     @RequestMapping("/loadfromnavixy")
     public String load(Map<String, Object> model) {
 
-        model.put("message", "Welcome to Dempsey Wood Load Counting Demo");
         Date startOfWeek = new Date();
         Calendar cal = Calendar.getInstance();
         cal.setTime(startOfWeek);
