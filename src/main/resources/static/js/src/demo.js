@@ -34,7 +34,6 @@ var isDetailDialogEnabled = true;
 var count = 1;
 var polylines = [];
 loadTracksFromServer();
-var projectId = '1';
 
 map.on('draw:editstart', function(event) {
 	isDetailDialogEnabled = false;
@@ -71,7 +70,6 @@ map.on('draw:created', function(e) {
 	props.material = 'Top soil';
 	props.zoneName = 'Zone ' + count++;
 	props.zoneType = 'Loading zone';
-	props.projectId = projectId;
 
 	drawnItems.addLayer(layer);
 	map.addLayer(layer);
@@ -272,11 +270,10 @@ function submitGeofences() {
 function getLoadCount() {
 	$.ajax({
 		type : "GET",
-		url : "/geofence/loadcount",
+		url : "/loadcount",
 		data : {
 			"startDateString" : $('#startDate').val(),
 			"endDateString" : $('#endDate').val(),
-			"projectIdString" : projectId
 		},
 		contentType : "application/json; charset=utf-8",
 		dataType : "html",

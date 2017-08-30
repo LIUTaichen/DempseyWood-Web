@@ -7,14 +7,22 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+	
+	@Autowired
+	private DWUserDetailService userDetailServce;
+	@Autowired
+	private CustomAuthenticationProvider authenticationProvider;
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+        	.csrf().disable()
             .authorizeRequests()
-                .antMatchers("/", "/css/**", "/webjars/**", "/images/**", "/js/**").permitAll()
+                .antMatchers( "/css/**", "/webjars/**", "/images/**", "/js/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
             .formLogin()
@@ -27,9 +35,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-            .inMemoryAuthentication()
-                .withUser("jason.liu@dempseywood.co.nz").password("password").roles("USER");
+    	auth.userDetailsService(userDetailServce);
+    	 auth.authenticationProvider(authenticationProvider);
+        
+          /*  .inMemoryAuthentication()
+                .withUser("jason.liu@dempseywood.co.nz").password("password").roles("USER");*/
         
     }
 }
