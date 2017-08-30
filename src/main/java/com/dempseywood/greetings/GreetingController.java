@@ -53,7 +53,7 @@ public class GreetingController {
     @Transactional
     private void saveReading(List<Reading> readingList, Integer trackerId){
         for(Reading reading: readingList){
-            reading.setTrackerId(9);
+            reading.setTrackerId(trackerId);
             readingRepository.save(reading);
         }
 

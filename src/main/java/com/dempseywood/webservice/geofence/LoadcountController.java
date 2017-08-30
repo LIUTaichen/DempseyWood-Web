@@ -52,7 +52,7 @@ public class LoadcountController {
 	@Autowired
 	private ProjectService projectService;
 
-	@RequestMapping(value = { "/", "/loadcount" })
+	@RequestMapping(value = { "/" })
 	public String load(Map<String, Object> model, Principal principal) {
 		String email = principal.getName();
 		Integer projectId = projectService.getProjectIdFromUserEmail(email);

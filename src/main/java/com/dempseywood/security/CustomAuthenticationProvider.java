@@ -1,4 +1,4 @@
-package com.dempseywood;
+package com.dempseywood.security;
 
 import java.util.ArrayList;
 

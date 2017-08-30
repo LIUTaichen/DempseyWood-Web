@@ -1,4 +1,4 @@
-package com.dempseywood;
+package com.dempseywood.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

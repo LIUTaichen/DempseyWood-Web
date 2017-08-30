@@ -48,22 +48,6 @@ public class GeofenceController {
 	@Autowired
 	private ProjectService projectService;
 
-	@RequestMapping(path = "/data", method = RequestMethod.POST, produces = "application/json") @ResponseStatus(HttpStatus.CREATED) @Transactional public @ResponseBody Greeting addNewEquipmentStatus(
-			@RequestBody GeofencesTO geofences) {
-		System.out.println("loading area: ");
-		geofences.getLoad().getVertices().forEach(latlng -> System.out.println(latlng));
-		Geofence loadingArea = new Geofence();
-		loadingArea.setVertices(geofences.getLoad().getVertices());
-		System.out.println("dumping area: ");
-		geofences.getDump().getVertices().forEach(latlng -> System.out.println(latlng));
-		Geofence dumpingArea = new Geofence();
-		dumpingArea.setVertices(geofences.getDump().getVertices());
-		Integer count = service.getNumberOfTrips(loadingArea, dumpingArea, readingRepo.findByTrackerId(9));
-		Greeting greeting = new Greeting(0, count.toString());
-		return greeting;
-	}
-
-	
 
 	
 
@@ -159,10 +143,13 @@ public class GeofenceController {
 	@RequestMapping(method = RequestMethod.PUT)
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	@Transactional
-	public @ResponseBody void updateGeofences(@RequestBody List<Geofence> geofences) {
+	public @ResponseBody void updateGeofences(@RequestBody List<Geofence> geofences, Principal principal) {
 		log.debug("calling updateGeofences");
+		String email = principal.getName();
+		Integer projectId = projectService.getProjectIdFromUserEmail(email);
 		geofences.forEach(geofence -> {
 			latLngRepository.deleteByGeofenceId(geofence.getId());
+			geofence.setProjectId(projectId);
 		});
 		geofenceRepository.save(geofences);
 
