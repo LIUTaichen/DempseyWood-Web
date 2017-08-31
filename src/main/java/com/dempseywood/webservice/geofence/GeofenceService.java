@@ -149,6 +149,9 @@ public class GeofenceService {
     public boolean isIn(Reading reading, GeofencesTO fence){
         return containsLocation(reading.getLat(), reading.getLng(), fence.getLatlngs(), false );
     }
+    
+    
+   
 }
 
 

@@ -20,9 +20,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+	        .sessionManagement()
+		        .invalidSessionUrl("/invalidSession")
+		        .and()
         	.csrf().disable()
             .authorizeRequests()
-                .antMatchers( "/css/**", "/webjars/**", "/images/**", "/js/**").permitAll()
+                .antMatchers( "/css/**", "/webjars/**", "/images/**", "/js/**", "/invalidSession").permitAll()
                 .anyRequest().authenticated()
                 .and()
             .formLogin()

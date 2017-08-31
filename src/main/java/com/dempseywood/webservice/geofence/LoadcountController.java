@@ -127,5 +127,10 @@ public class LoadcountController {
 		}
 		return "loadcount::resultsTable";
 	}
+	
+	@RequestMapping(value = { "/invalidSession" })
+	public String load(Map<String, Object> model) {
+		return "invalidSession";
+	}
 
 }
