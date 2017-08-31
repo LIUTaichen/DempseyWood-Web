@@ -82,6 +82,8 @@ map.on('draw:created', function(e) {
 	}).openTooltip();
 	addPopup(layer);
 	addNewFence(layer);
+	layer.fire('click');
+	
 });
 
 // hides popover when the draw polygon button is first clicked

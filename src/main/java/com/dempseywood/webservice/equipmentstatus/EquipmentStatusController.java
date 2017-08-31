@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/status")
+@RequestMapping("/api/status")
 public class EquipmentStatusController {
 
     @Autowired
