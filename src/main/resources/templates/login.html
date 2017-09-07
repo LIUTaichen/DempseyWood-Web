@@ -40,8 +40,10 @@
 					<h1>Sign in</h1>
 				</div>
 				<div>
-					<p th:if="${param.error}" class="text-danger">Invalid username and password.</p>
-					<p th:if="${param.logout}" class="text-info">You have been logged out.</p>
+					<p th:if="${param.error}" class="text-danger">Invalid username
+						and password.</p>
+					<p th:if="${param.logout}" class="text-info">You have been
+						logged out.</p>
 				</div>
 				<form role="form" method="POST" th:action="@{/login}">
 					<fieldset>
@@ -54,6 +56,12 @@
 							<label for="password">Password</label> <input
 								class="form-control" placeholder="Password" name="password"
 								type="password" value="" id="password" />
+						</div>
+						<div class="input-group">
+							<div class="checkbox">
+								<label><input
+									name="remember-me" type="checkbox" value="" id="rememberMe" />Remember me </label>
+							</div>
 						</div>
 						<!-- Change this to a button or input when using this as a form -->
 						<button type="submit" class="btn btn-primary btn-block">Sign

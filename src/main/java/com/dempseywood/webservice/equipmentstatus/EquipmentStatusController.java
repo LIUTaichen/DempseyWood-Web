@@ -23,6 +23,9 @@ public class EquipmentStatusController {
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public @ResponseBody String addNewEquipmentStatus(@RequestBody Iterable<EquipmentStatus> statusList) {
+    	for(EquipmentStatus status: statusList){
+    		status.setId(null);
+    	}
         equipmentStatusRepository.save(statusList);
         return "Saved";
     }
