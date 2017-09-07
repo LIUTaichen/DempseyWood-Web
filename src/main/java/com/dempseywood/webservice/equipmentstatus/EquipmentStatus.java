@@ -27,6 +27,8 @@ public class EquipmentStatus {
     private Double longitude;
 
     private Date timestamp;
+    
+    private String imei;
 
 
 
@@ -96,4 +98,13 @@ public class EquipmentStatus {
         this.timestamp = timestamp;
     }
 
+	public String getImei() {
+		return imei;
+	}
+
+	public void setImei(String imei) {
+		this.imei = imei;
+	}
+
+    
 }

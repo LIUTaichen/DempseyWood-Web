@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/3.3.7/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
+<link rel="stylesheet" th:href="@{/css/login.css}"
+	href="../../css/login.css" />
+<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+<script type="text/javascript"
+	src="/webjars/bootstrap/3.3.7/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
+<title>Login</title>
+</head>
+<body>
+	<nav class="navbar  navbar-static-top ">
+
+		<div class="container">
+
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#" id="navbar-brand"> <img
+					th:src="@{/images/dw-logo-full.svg}" />
+				</a>
+
+			</div>
+			<div id="navbar" class="collapse navbar-collapse">
+				<ul class="nav navbar-nav navbar-right">
+					<li class="active"><a href="#">Home</a></li>
+					<li><a href="#about">About</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<div class="container">
+
+		<div class="row">
+			<div class="col-md-4 col-md-offset-4">
+				<div class="panel-heading">
+					<h1>Sign in</h1>
+				</div>
+				<div>
+					<p th:if="${param.error}" class="text-danger">Invalid username
+						and password.</p>
+					<p th:if="${param.logout}" class="text-info">You have been
+						logged out.</p>
+				</div>
+				<form role="form" method="POST" th:action="@{/login}">
+					<fieldset>
+						<div class="form-group">
+							<label for="email">Email</label> <input class="form-control"
+								placeholder="E-mail" name="username" type="email"
+								autofocus="true" id="email" />
+						</div>
+						<div class="form-group">
+							<label for="password">Password</label> <input
+								class="form-control" placeholder="Password" name="password"
+								type="password" value="" id="password" />
+						</div>
+						<div class="input-group">
+							<div class="checkbox">
+								<label><input
+									name="remember-me" type="checkbox" value="" id="rememberMe" />Remember me </label>
+							</div>
+						</div>
+						<!-- Change this to a button or input when using this as a form -->
+						<button type="submit" class="btn btn-primary btn-block">Sign
+							in</button>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

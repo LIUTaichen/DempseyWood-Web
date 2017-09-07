@@ -108,5 +108,9 @@ public class GeofenceServiceTest {
         pointsOutsideBoth.forEach(point -> assertFalse(service.isIn(point, loadingArea)));
         pointsOutsideBoth.forEach(point -> assertFalse(service.isIn(point, dumpingArea)));
     }
+    
+    
+   
+    
 
 }

@@ -39,12 +39,12 @@ public class GreetingController {
     @RequestMapping("/thyme")
     public String welcome(Map<String, Object> model) {
         model.put("message", "hello world from dw");
+        
         return "welcome";
     }
 
     @RequestMapping("/login")
     public String login(Map<String, Object> model) {
-        model.put("message", "hello world from dw");
         return "login";
     }
 
@@ -53,7 +53,7 @@ public class GreetingController {
     @Transactional
     private void saveReading(List<Reading> readingList, Integer trackerId){
         for(Reading reading: readingList){
-            reading.setTrackerId(9);
+            reading.setTrackerId(trackerId);
             readingRepository.save(reading);
         }
 
