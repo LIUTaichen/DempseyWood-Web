@@ -1,9 +1,9 @@
 package com.dempseywood.webservice.geofence;
 
 
-import com.dempseywood.entity.*;
-import com.dempseywood.entity.repository.EquipmentRepository;
-import com.dempseywood.entity.repository.TrackerRepository;
+import com.dempseywood.model.*;
+import com.dempseywood.repository.EquipmentRepository;
+import com.dempseywood.repository.TrackerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

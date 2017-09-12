@@ -1,11 +1,9 @@
-package com.dempseywood.webservice.geofence;
+package com.dempseywood.model;
 
-import com.dempseywood.entity.Equipment;
-import com.dempseywood.entity.Geofence;
+import com.dempseywood.model.Equipment;
+import com.dempseywood.model.Geofence;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Trip {
     private Equipment vehicle;

@@ -1,6 +1,6 @@
-package com.dempseywood.entity.repository;
+package com.dempseywood.repository;
 
-import com.dempseywood.entity.LatLng;
+import com.dempseywood.model.LatLng;
 import org.springframework.data.repository.CrudRepository;
 
 public interface LatLngRepository extends CrudRepository<LatLng, Integer>{

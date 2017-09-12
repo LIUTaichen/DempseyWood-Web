@@ -1,9 +1,8 @@
-package com.dempseywood.entity.repository;
+package com.dempseywood.repository;
 
-import com.dempseywood.webservice.equipmentstatus.EquipmentStatus;
+import com.dempseywood.model.EquipmentStatus;
 import org.springframework.data.repository.CrudRepository;
 
-import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -11,4 +10,6 @@ import java.util.List;
 public interface EquipmentStatusRepository extends CrudRepository<EquipmentStatus, Long> {
 
     List<EquipmentStatus> findByTimestampBetweenOrderByOperatorDescTimestamp(Date startOfDay, Date time);
+
+    List<EquipmentStatus> findByTimestampBetweenOrderByEquipmentDescTimestamp(Date startOfDay, Date time);
 }

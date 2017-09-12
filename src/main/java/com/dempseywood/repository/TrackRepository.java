@@ -1,6 +1,6 @@
-package com.dempseywood.entity.repository;
+package com.dempseywood.repository;
 
-import com.dempseywood.entity.Track;
+import com.dempseywood.model.Track;
 import org.springframework.data.repository.CrudRepository;
 
 public interface TrackRepository  extends CrudRepository<Track, Long> {

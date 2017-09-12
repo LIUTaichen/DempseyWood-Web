@@ -1,4 +1,4 @@
-package com.dempseywood.entity;
+package com.dempseywood.model;
 
 
 import javax.persistence.Entity;
@@ -13,8 +13,11 @@ public class Equipment {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
     private String name;
+    private String fleetId;
     private Double capacity;
     private String type;
+    private Double costPerHour;
+
 
     public Integer getId() {
         return id;
@@ -32,6 +35,14 @@ public class Equipment {
         this.name = name;
     }
 
+    public String getFleetId() {
+        return fleetId;
+    }
+
+    public void setFleetId(String fleetId) {
+        this.fleetId = fleetId;
+    }
+
     public String getType() {
         return type;
     }
@@ -46,5 +57,13 @@ public class Equipment {
 
     public void setCapacity(Double capacity) {
         this.capacity = capacity;
+    }
+
+    public Double getCostPerHour() {
+        return costPerHour;
+    }
+
+    public void setCostPerHour(Double costPerHour) {
+        this.costPerHour = costPerHour;
     }
 }

@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.dempseywood.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +20,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.dempseywood.entity.Geofence;
-import com.dempseywood.entity.Reading;
-import com.dempseywood.entity.Track;
-import com.dempseywood.entity.repository.GeofenceRepository;
-import com.dempseywood.entity.repository.LatLngRepository;
-import com.dempseywood.entity.repository.ReadingRepository;
-import com.dempseywood.entity.repository.TrackRepository;
+import com.dempseywood.repository.GeofenceRepository;
+import com.dempseywood.repository.LatLngRepository;
+import com.dempseywood.repository.ReadingRepository;
+import com.dempseywood.repository.TrackRepository;
 import com.dempseywood.service.ProjectService;
 
 @Controller

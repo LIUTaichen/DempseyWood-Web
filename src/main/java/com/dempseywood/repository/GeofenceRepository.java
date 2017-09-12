@@ -1,7 +1,6 @@
-package com.dempseywood.entity.repository;
+package com.dempseywood.repository;
 
-import com.dempseywood.entity.Geofence;
-import com.dempseywood.entity.Reading;
+import com.dempseywood.model.Geofence;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

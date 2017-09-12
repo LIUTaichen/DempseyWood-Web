@@ -1,6 +1,4 @@
-package com.dempseywood.entity;
-
-import com.dempseywood.entity.LatLng;
+package com.dempseywood.model;
 
 import javax.persistence.*;
 import java.util.List;

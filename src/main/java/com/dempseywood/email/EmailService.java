@@ -46,10 +46,10 @@ public class EmailService {
     }
 
 
-   public void send(){
+   public void send(Workbook workbook){
         String toEmailAddress = "tliu861@aucklanduni.ac.nz";
         String messageString = "Hi, //n Please find the daily report of equipment activity in the attachment";
-       MimeMessage mimeMessage = getMimeMessage(toEmailAddress , messageString);
+       MimeMessage mimeMessage = getMimeMessage(toEmailAddress , messageString, workbook);
 
        try {
            this.emailSender.send(mimeMessage);
@@ -58,7 +58,7 @@ public class EmailService {
        }
    }
 
-    private MimeMessage getMimeMessage(String toEmailAddress, String messageString) {
+    private MimeMessage getMimeMessage(String toEmailAddress, String messageString, Workbook workbook) {
         logger.info("constructing and sending email.");
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         try {
@@ -66,7 +66,7 @@ public class EmailService {
             helper.setTo(toEmailAddress);
             helper.setText(
                     messageString);
-            Workbook workbook = report.writeReport();
+            //Workbook workbook = report.writeReport();
             ByteArrayOutputStream os = new ByteArrayOutputStream();
 
             try {

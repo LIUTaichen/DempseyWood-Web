@@ -1,13 +1,13 @@
 package com.dempseywood.webservice.geofence;
 
-import com.dempseywood.entity.Geofence;
-import com.dempseywood.entity.LatLng;
-import com.dempseywood.entity.Reading;
-import com.dempseywood.entity.Track;
-import com.dempseywood.entity.repository.GeofenceRepository;
-import com.dempseywood.entity.repository.LatLngRepository;
-import com.dempseywood.entity.repository.ReadingRepository;
-import com.dempseywood.entity.repository.TrackRepository;
+import com.dempseywood.model.Geofence;
+import com.dempseywood.model.GeofencesTO;
+import com.dempseywood.model.Reading;
+import com.dempseywood.model.Track;
+import com.dempseywood.repository.GeofenceRepository;
+import com.dempseywood.repository.LatLngRepository;
+import com.dempseywood.repository.ReadingRepository;
+import com.dempseywood.repository.TrackRepository;
 import com.dempseywood.greetings.Greeting;
 import com.dempseywood.service.ProjectService;
 

@@ -1,8 +1,8 @@
 package com.dempseywood.webservice.geofence;
 
-import com.dempseywood.entity.Geofence;
-import com.dempseywood.entity.LatLng;
-import com.dempseywood.entity.Reading;
+import com.dempseywood.model.Geofence;
+import com.dempseywood.model.LatLng;
+import com.dempseywood.model.Reading;
 import org.junit.Before;
 import org.junit.Test;
 

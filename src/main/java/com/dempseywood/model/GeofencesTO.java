@@ -1,7 +1,7 @@
-package com.dempseywood.webservice.geofence;
+package com.dempseywood.model;
 
-import com.dempseywood.entity.Geofence;
-import com.dempseywood.entity.LatLng;
+import com.dempseywood.model.Geofence;
+import com.dempseywood.model.LatLng;
 
 import java.util.List;
 

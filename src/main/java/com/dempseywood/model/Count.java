@@ -1,4 +1,4 @@
-package com.dempseywood.webservice.geofence;
+package com.dempseywood.model;
 
 public class Count {
     private String material;

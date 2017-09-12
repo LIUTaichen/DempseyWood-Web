@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dempseywood.entity.Project;
-import com.dempseywood.entity.ProjectManager;
-import com.dempseywood.entity.repository.ProjectManagerRepository;
-import com.dempseywood.entity.repository.ProjectRepository;
+import com.dempseywood.model.Project;
+import com.dempseywood.model.ProjectManager;
+import com.dempseywood.repository.ProjectManagerRepository;
+import com.dempseywood.repository.ProjectRepository;
 
 @Service
 public class ProjectService {

@@ -1,6 +1,6 @@
-package com.dempseywood.entity.repository;
+package com.dempseywood.repository;
 
-import com.dempseywood.entity.Reading;
+import com.dempseywood.model.Reading;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Date;

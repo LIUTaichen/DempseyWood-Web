@@ -1,4 +1,4 @@
-package com.dempseywood.entity;
+package com.dempseywood.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -21,6 +21,7 @@ bootRun {
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+ext['hibernate.version'] = '5.2.3.Final'
 repositories {
     mavenCentral()
 }
