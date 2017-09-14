@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
@@ -25,7 +26,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		        .and()
         	.csrf().disable()
             .authorizeRequests()
-                .antMatchers( "/css/**", "/webjars/**", "/images/**", "/js/**", "/invalidSession", "/api/*").permitAll()
+                .antMatchers( "/css/**", "/webjars/**", "/images/**", "/js/**", "/invalidSession").permitAll()
                 .anyRequest().authenticated()
                 .and()
             .formLogin()
@@ -45,4 +46,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .withUser("jason.liu@dempseywood.co.nz").password("password").roles("USER");*/
         
     }
+
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web
+				.ignoring()
+				.antMatchers("/api/**");
+	}
 }

@@ -23,9 +23,6 @@ public class EquipmentStatusController {
     private DailyExcelReportView report;
 
     @Autowired
-    private EmailService emailService;
-
-    @Autowired
     private ReportService reportService;
 
     @Autowired
@@ -52,23 +49,9 @@ public class EquipmentStatusController {
        // return equipmentStatusRepository.find
     }
 
-    @RequestMapping(path = "/report", method = RequestMethod.GET)
-    @ResponseStatus(HttpStatus.OK)
-    public String generateReport() {
-        //report.writeReport();
-        //ModelAndView view = new ModelAndView("dailyExcelReportView", "listBooks", null);
-        return "/report";
-    }
 
-    @RequestMapping(path="/email", method=RequestMethod.GET)
-    @ResponseStatus(HttpStatus.OK)
-    public String sendEmail( Principal principal){
-        String email = principal.getName();
-        Integer projectId = projectService.getProjectIdFromUserEmail(email);
-        Workbook workbook = reportService.writeReportForProject(projectId);
-        emailService.send(workbook);
-        return "email sent";
-    }
+
+
 
 
 

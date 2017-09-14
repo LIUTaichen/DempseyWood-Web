@@ -1,9 +1,7 @@
 package com.dempseywood.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Project {
@@ -28,5 +26,20 @@ public class Project {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "project_equipment",
+            joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "equipment_id",
+                    referencedColumnName = "id"))
+    private List<Equipment> equipments;
+
+    public List<Equipment> getEquipments() {
+        return equipments;
+    }
+
+    public void setEquipments(List<Equipment> equipments) {
+        this.equipments = equipments;
     }
 }

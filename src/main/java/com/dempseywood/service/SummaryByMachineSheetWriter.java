@@ -59,8 +59,9 @@ public class SummaryByMachineSheetWriter extends SheetWriter {
 
             row.createCell(currentColumn++).setCellValue(entry.getLoadType());
             row.createCell(currentColumn++).setCellValue(entry.getLoadCount());
-            row.createCell(currentColumn++).setCellValue(entry.getDuration());
             row.createCell(currentColumn++).setCellValue(entry.getVolume());
+            row.createCell(currentColumn++).setCellValue(entry.getDuration());
+
             Cell costCell = row.createCell(currentColumn++);
             costCell.setCellValue(entry.getCost());
             costCell.setCellStyle(doubleCellStyle);

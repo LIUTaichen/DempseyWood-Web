@@ -1,10 +1,8 @@
 package com.dempseywood.model;
 
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Equipment {
@@ -17,6 +15,9 @@ public class Equipment {
     private Double capacity;
     private String type;
     private Double costPerHour;
+
+    @ManyToMany(mappedBy = "equipments")
+    private List<Project> projects;
 
 
     public Integer getId() {
@@ -65,5 +66,13 @@ public class Equipment {
 
     public void setCostPerHour(Double costPerHour) {
         this.costPerHour = costPerHour;
+    }
+
+    public List<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
     }
 }

@@ -9,7 +9,9 @@ import java.util.List;
 
 public interface EquipmentStatusRepository extends CrudRepository<EquipmentStatus, Long> {
 
-    List<EquipmentStatus> findByTimestampBetweenOrderByOperatorDescTimestamp(Date startOfDay, Date time);
+    List<EquipmentStatus> findByTimestampBetweenOrderByOperatorDescTimestamp(Date startTime, Date endtTime);
 
-    List<EquipmentStatus> findByTimestampBetweenOrderByEquipmentDescTimestamp(Date startOfDay, Date time);
+    List<EquipmentStatus> findByTimestampBetweenOrderByEquipmentDescTimestamp(Date startTime, Date endtTime);
+
+    List<EquipmentStatus> findByTimestampBetweenAndEquipmentInOrderByEquipmentDescTimestamp(Date startOfDay, Date time, List<String> equipmentNames);
 }
