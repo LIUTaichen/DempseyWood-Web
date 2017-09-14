@@ -1,17 +1,13 @@
 package com.dempseywood.webservice.equipmentstatus;
 
-import com.dempseywood.email.EmailService;
 import com.dempseywood.model.EquipmentStatus;
 import com.dempseywood.repository.EquipmentStatusRepository;
 import com.dempseywood.service.ProjectService;
 import com.dempseywood.service.ReportService;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/status")

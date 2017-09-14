@@ -1,6 +1,7 @@
 package com.dempseywood.webservice;
 
 import com.dempseywood.email.EmailService;
+import com.dempseywood.model.Equipment;
 import com.dempseywood.model.EquipmentStatus;
 import com.dempseywood.model.Haul;
 import com.dempseywood.model.HaulSummary;
@@ -8,7 +9,6 @@ import com.dempseywood.repository.EquipmentStatusRepository;
 import com.dempseywood.service.ProjectService;
 import com.dempseywood.service.ReportService;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -102,7 +102,9 @@ public class ReportController {
         }
         Integer projectId = projectService.getProjectIdFromUserEmail(email);
         List<EquipmentStatus> statusList = reportService.getEquipmentStatusForTodayByProjectId(projectId);
-        List<Haul> haulList = reportService.convertEventsToHauls(statusList, projectId);
+        Map<String, Equipment> equipmentMap = reportService.getEquipmentsForProject(projectId).stream().collect(Collectors.toMap(Equipment::getName, p -> p));
+        Map<String, Double> taskToRevenueMap = reportService.getTaskRevenueMapForProject(projectId);
+        List<Haul> haulList = reportService.convertEventsToHauls(statusList,taskToRevenueMap,equipmentMap );
         List<HaulSummary> summaryList = reportService.getSummaryFromHauls(haulList);
         Workbook workbook = reportService.writeReportForProject(statusList, haulList,  summaryList);
         String content = reportService.buildEmailContentFromSummary(summaryList, "loadCountSummary");

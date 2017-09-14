@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 import org.springframework.scheduling.annotation.Async;
+import sun.java2d.pipe.SpanShapeRenderer;
 
 @Service
 public class EmailService {
@@ -67,6 +68,9 @@ public class EmailService {
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+            Date date = new Date();
+            SimpleDateFormat df = new SimpleDateFormat("EEE dd/MM/yyyy");
+            helper.setSubject("Load count for Murphys Road "+ df.format(date));
             helper.setTo(toEmailAddress);
             helper.setText(
                     messageString, true);
