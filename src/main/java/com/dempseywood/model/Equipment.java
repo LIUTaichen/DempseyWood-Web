@@ -16,9 +16,18 @@ public class Equipment {
     private String type;
     private Double costPerHour;
 
+
+
     @ManyToMany(mappedBy = "equipments")
     private List<Project> projects;
+    public Equipment(String name, Double capacity, Double costPerHour) {
+        this.name = name;
+        this.capacity = capacity;
+        this.costPerHour = costPerHour;
+    }
 
+    public Equipment() {
+    }
 
     public Integer getId() {
         return id;

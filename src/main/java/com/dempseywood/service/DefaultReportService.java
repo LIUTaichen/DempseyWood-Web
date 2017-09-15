@@ -5,7 +5,6 @@ import com.dempseywood.repository.CostScheduleRepository;
 import com.dempseywood.repository.EquipmentRepository;
 import com.dempseywood.repository.EquipmentStatusRepository;
 import com.dempseywood.repository.ProjectRepository;
-import com.dempseywood.webservice.geofence.TruckStatus;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
@@ -15,23 +14,18 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
-import static com.dempseywood.webservice.geofence.TruckStatus.UNLOADED;
-
 @Service
-public class ReportServiceImpl implements ReportService {
+public class DefaultReportService implements ReportService {
 
 
     public static final int MILLISECONDS_IN_HOUR = 3600000;
-    private Logger log = LoggerFactory.getLogger("ReportServiceImpl");
+    private Logger log = LoggerFactory.getLogger("DefaultReportService");
 
     @Autowired
     private EquipmentStatusRepository equipmentStatusRepository;
@@ -96,23 +90,55 @@ public class ReportServiceImpl implements ReportService {
         return summaryList;
     }
 
+    public boolean isMatchingPair(EquipmentStatus loadingEvent, EquipmentStatus unloadingEvent){
+        if(!isValidEquipmentStatus(loadingEvent) || !isValidEquipmentStatus(unloadingEvent)){
+            return false;
+        }
+        else if(!loadingEvent.getStatus().equals("Loaded") && unloadingEvent.getStatus().equals("Unloaded")) {
+            return false;
+        }else if(!loadingEvent.getEquipment().equals(unloadingEvent.getEquipment())) {
+            return false;
+        }else if(!loadingEvent.getTask().equals(unloadingEvent.getTask())){
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isValidEquipmentStatus(EquipmentStatus event){
+        if(event == null){
+            return false;
+        }
+        else if(event.getEquipment() == null || event.getStatus() == null || event.getTask() == null){
+            return false;
+        }else if(event.getEquipment().isEmpty()|| event.getStatus().isEmpty() || event.getTask().isEmpty()){
+                return false;
+            }
+        return true;
+    }
+
+
+
     @Override
-    public List<Haul> convertEventsToHauls(List<EquipmentStatus> statusList, Map<String, Double> revenueScheule, Map<String, Equipment> equipmentMap) {
+    public List<Haul> convertEventsToHauls(List<EquipmentStatus> statusList, Map<String, Double> revenueSchedule, Map<String, Equipment> equipmentMap) {
         List<Haul> haulList = new ArrayList<>();
 
         EquipmentStatus loadingEvent = null;
         EquipmentStatus unloadingEvent = null;
         String equipmentStringForCurrentHaul = "";
-        for (EquipmentStatus event : statusList) {
+        for (EquipmentStatus event: statusList) {
+            if(!isValidEquipmentStatus(event )){
+                log.info("error processing record: " + event);
+                continue;
+            }
             //next entry is for another equipment
             if (!event.getEquipment().equals(equipmentStringForCurrentHaul)) {
                 equipmentStringForCurrentHaul = event.getEquipment();
                 loadingEvent = null;
                 unloadingEvent = null;
             }
-            if (event.getStatus().equals("Loaded")) {
+            if (event.getStatus().equals("Loaded") && unloadingEvent == null) {
                 loadingEvent = event;
-            } else if (event.getStatus().equals("Unloaded")) {
+            } else if (isMatchingPair(loadingEvent, event)) {
                 unloadingEvent = event;
             }
             if (loadingEvent != null && unloadingEvent != null) {
@@ -137,7 +163,7 @@ public class ReportServiceImpl implements ReportService {
                 haul.setVolume(equipment.getCapacity());
                 double cost = equipment.getCostPerHour() / MILLISECONDS_IN_HOUR * Duration.between(haulStartTime, haulFinishTime).toMillis();
                 haul.setCost(cost);
-                double revenue = equipment.getCapacity() * revenueScheule.get(loadingEvent.getTask());
+                double revenue = equipment.getCapacity() * revenueSchedule.get(loadingEvent.getTask());
                 haul.setRevenue(revenue);
                 double profit = revenue - cost;
                 haul.setProfit(profit);
@@ -173,11 +199,12 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public List<EquipmentStatus> getEquipmentStatusForTodayByProjectId(Integer projectId) {
         Date time = new Date();
-        return getEquipmentStatusForDayByProjectId(time, projectId);
+        Date startOfDay = getTimeOfBeginningOfToday(time);
+        return getEquipmentStatusByProjectIdAndTimestamp(projectId, startOfDay, time );
     }
 
     @Override
-    public List<EquipmentStatus> getEquipmentStatusForDayByProjectId(Date date, Integer projectId) {
+    public List<EquipmentStatus> getEquipmentStatusByProjectIdAndTimestamp(Integer projectId, Date startTime, Date endTime ) {
         log.debug("retrieving all equipmentStatus for the project with projectId: [" + projectId + "]");
         List<EquipmentStatus> resultList = new ArrayList<>();
         Project project = projectRepository.findOne(projectId);
@@ -187,8 +214,8 @@ public class ReportServiceImpl implements ReportService {
         }
         List<Equipment> equipmentList = this.getEquipmentsForProject(projectId);
         List<String> equipmentNames = equipmentList.stream().map(equipment -> equipment.getName()).collect(Collectors.toList());
-        Date startOfDay = getTimeOfBeginningOfToday(date);
-        resultList = equipmentStatusRepository.findByTimestampBetweenAndEquipmentInOrderByEquipmentDescTimestamp(startOfDay, date, equipmentNames);
+
+        resultList = equipmentStatusRepository.findByTimestampBetweenAndEquipmentInOrderByEquipmentDescTimestamp(startTime, endTime, equipmentNames);
         log.info("Number of entries retrieved: " + resultList.size());
         return resultList;
     }

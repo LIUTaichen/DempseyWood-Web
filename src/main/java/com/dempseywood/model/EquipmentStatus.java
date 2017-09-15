@@ -27,7 +27,21 @@ public class EquipmentStatus {
     private String imei;
 
 
+    public EquipmentStatus(String equipment, String task, String status) {
+        this.equipment = equipment;
+        this.task = task;
+        this.status = status;
+    }
 
+    public EquipmentStatus(String equipment, String task, String status, Date timestamp) {
+        this.equipment = equipment;
+        this.task = task;
+        this.status = status;
+        this.timestamp = timestamp;
+    }
+
+    public EquipmentStatus() {
+    }
 
     public Integer getId() {
         return id;

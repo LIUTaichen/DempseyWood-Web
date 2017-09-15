@@ -23,7 +23,7 @@ public interface ReportService {
 
     List<EquipmentStatus> getEquipmentStatusForTodayByProjectId(Integer projectId);
 
-    List<EquipmentStatus> getEquipmentStatusForDayByProjectId(Date date, Integer projectId);
+    List<EquipmentStatus> getEquipmentStatusByProjectIdAndTimestamp(Integer projectId, Date startTime, Date endTime );
 
     String buildEmailContentFromSummary(List<HaulSummary> summaryList, String template);
 

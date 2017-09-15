@@ -84,6 +84,7 @@ public class ReportController {
 
             oldTime.set(Calendar.MONTH, calendar.get(Calendar.MONTH));
             oldTime.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH));
+            oldTime.set(Calendar.HOUR, oldTime.get(Calendar.HOUR) - 1);
             status.setTimestamp(oldTime.getTime());
 
         }

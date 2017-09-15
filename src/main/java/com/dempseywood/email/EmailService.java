@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.InputStreamSource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -19,9 +20,7 @@ import javax.mail.internet.MimeMessage;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Properties;
-import org.springframework.scheduling.annotation.Async;
-import sun.java2d.pipe.SpanShapeRenderer;
+
 
 @Service
 public class EmailService {
@@ -59,7 +58,7 @@ public class EmailService {
         }
     }
    public void send(Workbook workbook, String content){
-        String toEmailAddress = "tliu861@aucklanduni.ac.nz";
+        String toEmailAddress = "jason.liu@dempseywood.co.nz";
         send(workbook, content,toEmailAddress );
    }
 
@@ -83,7 +82,7 @@ public class EmailService {
             }catch(IOException ex){
                 ex.printStackTrace();
             }
-            ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
+            InputStreamSource resource = new ByteArrayResource(os.toByteArray());
             SimpleDateFormat sdf = new SimpleDateFormat("dd_mm_yyyy");
             StringBuilder fileNameStringBuilder = new StringBuilder();
             fileNameStringBuilder.append("Daily_Report_");
