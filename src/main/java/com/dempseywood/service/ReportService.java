@@ -17,8 +17,6 @@ public interface ReportService {
 
     List<Haul> convertEventsToHauls(List<EquipmentStatus> statusList, Map<String, Double> revenueScheule, Map<String, Equipment> equipmentMap);
 
-    Map<String, Double> getTaskRevenueMapForProject(Integer projectId);
-
     List<HaulSummary> getSummaryList(Integer projectId);
 
     List<EquipmentStatus> getEquipmentStatusForTodayByProjectId(Integer projectId);
@@ -27,5 +25,4 @@ public interface ReportService {
 
     String buildEmailContentFromSummary(List<HaulSummary> summaryList, String template);
 
-    List<Equipment> getEquipmentsForProject(Integer projectId);
 }

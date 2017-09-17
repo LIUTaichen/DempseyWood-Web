@@ -1,10 +1,7 @@
 package com.dempseywood.webservice;
 
 import com.dempseywood.email.EmailService;
-import com.dempseywood.model.Equipment;
-import com.dempseywood.model.EquipmentStatus;
-import com.dempseywood.model.Haul;
-import com.dempseywood.model.HaulSummary;
+import com.dempseywood.model.*;
 import com.dempseywood.repository.EquipmentStatusRepository;
 import com.dempseywood.service.ProjectService;
 import com.dempseywood.service.ReportService;
@@ -23,6 +20,7 @@ import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Controller
@@ -59,6 +57,23 @@ public class ReportController {
         List<HaulSummary> summaryList = reportService.getSummaryList(projectId);
         List<HaulSummary> summaryByMachine = summaryList.stream().sorted(Comparator.comparing(HaulSummary::getEquipment).thenComparing(HaulSummary::getLoadType)).collect(Collectors.toList());
         List<HaulSummary> summaryByLoadType = summaryList.stream().sorted(Comparator.comparing(HaulSummary::getLoadType).thenComparing(HaulSummary::getEquipment)).collect(Collectors.toList());
+       Map<String, BaseLoadCountSummary> map = new HashMap<String, BaseLoadCountSummary>();
+
+        for(HaulSummary summary : summaryByMachine){
+            BaseLoadCountSummary group = map.get(summary.getEquipment());
+            if(group == null){
+                group = new BaseLoadCountSummary();
+                map.put(summary.getEquipment(), group);
+            }
+            group.add(summary);
+        }
+        BaseLoadCountSummary byMachineTable = new BaseLoadCountSummary();
+        map.entrySet().forEach(entry -> {
+            entry.getValue().compute();
+            byMachineTable.add(entry.getValue());
+        });
+        byMachineTable.compute();
+        model.put("byMachineTable", byMachineTable);
         model.put("summaryByMachine", summaryByMachine);
         model.put("summaryByLoadType", summaryByLoadType);
         return "loadCountSummary";
@@ -103,8 +118,8 @@ public class ReportController {
         }
         Integer projectId = projectService.getProjectIdFromUserEmail(email);
         List<EquipmentStatus> statusList = reportService.getEquipmentStatusForTodayByProjectId(projectId);
-        Map<String, Equipment> equipmentMap = reportService.getEquipmentsForProject(projectId).stream().collect(Collectors.toMap(Equipment::getName, p -> p));
-        Map<String, Double> taskToRevenueMap = reportService.getTaskRevenueMapForProject(projectId);
+        Map<String, Equipment> equipmentMap = projectService.getEquipmentsForProject(projectId).stream().collect(Collectors.toMap(Equipment::getName, p -> p));
+        Map<String, Double> taskToRevenueMap = projectService.getTaskRevenueMapForProject(projectId);
         List<Haul> haulList = reportService.convertEventsToHauls(statusList,taskToRevenueMap,equipmentMap );
         List<HaulSummary> summaryList = reportService.getSummaryFromHauls(haulList);
         Workbook workbook = reportService.writeReportForProject(statusList, haulList,  summaryList);

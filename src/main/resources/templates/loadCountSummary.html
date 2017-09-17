@@ -7,20 +7,73 @@
 </head>
 <body>
 <p>Hi,</p>
-<p>The following tables are summaries of the load counts for Murphys Road. More details are available in the spreadsheet attached.</p>
+<p>The following tables are summaries of the load counts for Murphys Road. More details are available in the spreadsheet
+    attached.</p>
 <p>Load counts by machine: </p>
 <table border="1" style="border-collapse: collapse;">
     <thead>
-        <tr>
-            <th width="80">Machine</th>
-            <th width="80">Load Type</th>
-            <th width="80">Load Count</th>
-            <th width="80">Volume (m<sup>3</sup>)</th>
-            <th width="80">Time (minutes)</th>
-            <th width="80">Cost</th>
-            <th width="80">Revenue</th>
-            <th width="80">Profit</th>
+    <tr>
+        <th width="80">Machine</th>
+        <th width="80">Load Type</th>
+        <th width="80">Load Count</th>
+        <th width="80">Volume (m<sup>3</sup>)</th>
+        <th width="80">Time (minutes)</th>
+        <th width="80">Cost</th>
+        <th width="80">Revenue</th>
+        <th width="80">Profit</th>
+    </tr>
+    </thead>
+    <tbody>
+    <th:block th:each="sum : ${byMachineTable.entries}">
+
+        <tr th:each="entry, itrStat:${ sum.entries}">
+            <th:block th:if="${itrStat.index == 0}">
+                <td th:text="${entry.equipment}" align="center" th:rowspan="${itrStat.size}">DT5</td>
+            </th:block>
+
+            <td th:text="${entry.loadType}" align="center">Top Soil</td>
+            <td th:text="${entry.loadCount}" align="center" width="80">20</td>
+            <td th:text="${entry.volume}" align="center" width="80">200</td>
+            <td th:text="${entry.duration}" align="center" width="80">3.5</td>
+            <td th:text="${entry.cost} % 1 == 0? ${entry.cost} :${#numbers.formatDecimal(entry.cost, 0, 2)}"
+                align="center" width="80">
+                350
+            </td>
+            <td th:text="${entry.revenue}" align="center" width="80">400</td>
+            <td th:text="${entry.profit} % 1 == 0? ${entry.profit} :${#numbers.formatDecimal(entry.profit, 0, 2)}"
+                align="center" width="80">50
+            </td>
         </tr>
+
+        <tr>
+
+            <td th:text="Subtotal" align="center" th:colspan="2">Subtotal</td>
+            <td th:text="${sum.loadCount}" align="center">20</td>
+            <td th:text="${sum.volume}" align="center">200</td>
+            <td th:text="${sum.duration}" align="center">3.5</td>
+            <td th:text="${sum.cost} % 1 == 0? ${sum.cost} :${#numbers.formatDecimal(sum.cost, 0, 2)}" align="center">
+                350
+            </td>
+            <td th:text="${sum.revenue}" align="center">400</td>
+            <td th:text="${sum.profit} % 1 == 0? ${sum.profit} :${#numbers.formatDecimal(sum.profit, 0, 2)}"
+                align="center">50
+            </td>
+        </tr>
+    </th:block>
+    </tbody>
+</table>
+<table border="1" style="border-collapse: collapse;">
+    <thead>
+    <tr>
+        <th width="80">Machine</th>
+        <th width="80">Load Type</th>
+        <th width="80">Load Count</th>
+        <th width="80">Volume (m<sup>3</sup>)</th>
+        <th width="80">Time (minutes)</th>
+        <th width="80">Cost</th>
+        <th width="80">Revenue</th>
+        <th width="80">Profit</th>
+    </tr>
     </thead>
     <tbody>
     <tr th:each="entry : ${summaryByMachine}">
@@ -43,16 +96,16 @@
 <p>Load counts by load type: </p>
 <table border="1" style="border-collapse: collapse;">
     <thead>
-        <tr>
-            <th width="80">Load Type</th>
-            <th width="80">Machine</th>
-            <th width="80">Load Count</th>
-            <th width="80">Volume (m<sup>3</sup>)</th>
-            <th width="80">Time (minutes)</th>
-            <th width="80">Cost</th>
-            <th width="80">Revenue</th>
-            <th width="80">Profit</th>
-        </tr>
+    <tr>
+        <th width="80">Load Type</th>
+        <th width="80">Machine</th>
+        <th width="80">Load Count</th>
+        <th width="80">Volume (m<sup>3</sup>)</th>
+        <th width="80">Time (minutes)</th>
+        <th width="80">Cost</th>
+        <th width="80">Revenue</th>
+        <th width="80">Profit</th>
+    </tr>
     </thead>
     <tbody>
     <tr th:each="entry : ${summaryByLoadType}">

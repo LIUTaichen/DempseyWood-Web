@@ -33,11 +33,11 @@ public class DefaultReportService implements ReportService {
     private EquipmentRepository equipmentRepository;
 
     @Autowired
-    private CostScheduleRepository costScheduleRepository;
-    @Autowired
     private ProjectRepository projectRepository;
     @Autowired
     private TemplateEngine templateEngine;
+    @Autowired
+    private ProjectService projectService;
 
 
     @Override
@@ -175,22 +175,13 @@ public class DefaultReportService implements ReportService {
         return haulList;
     }
 
-    @Override
-    public Map<String, Double> getTaskRevenueMapForProject(Integer projectId) {
-        List<CostSchedule> costScheduleList = costScheduleRepository.findByProjectId(projectId);
-        Map<String, Double> revenueScheule = new HashMap<String, Double>();
-        for (CostSchedule cost : costScheduleList) {
-            revenueScheule.put(cost.getTask(), cost.getRevenue());
-        }
-        return revenueScheule;
-    }
 
 
     @Override
     public List<HaulSummary> getSummaryList(Integer projectId) {
         List<EquipmentStatus> statusList = getEquipmentStatusForTodayByProjectId(projectId);
-        Map<String, Equipment> equipmentMap = getEquipmentsForProject(projectId).stream().collect(Collectors.toMap(Equipment::getName, p -> p));
-        Map<String, Double> taskToRevenueMap = getTaskRevenueMapForProject(projectId);
+        Map<String, Equipment> equipmentMap = projectService.getEquipmentsForProject(projectId).stream().collect(Collectors.toMap(Equipment::getName, p -> p));
+        Map<String, Double> taskToRevenueMap = projectService.getTaskRevenueMapForProject(projectId);
         List<Haul> haulList = convertEventsToHauls(statusList,taskToRevenueMap,equipmentMap);
         List<HaulSummary> summaryList = getSummaryFromHauls(haulList);
         return summaryList;
@@ -212,7 +203,7 @@ public class DefaultReportService implements ReportService {
             log.error("::getNameToEquipmentMapForProject Unable to find any project with projectId: [" + projectId + "]");
             return resultList;
         }
-        List<Equipment> equipmentList = this.getEquipmentsForProject(projectId);
+        List<Equipment> equipmentList = projectService.getEquipmentsForProject(projectId);
         List<String> equipmentNames = equipmentList.stream().map(equipment -> equipment.getName()).collect(Collectors.toList());
 
         resultList = equipmentStatusRepository.findByTimestampBetweenAndEquipmentInOrderByEquipmentDescTimestamp(startTime, endTime, equipmentNames);
@@ -241,18 +232,6 @@ public class DefaultReportService implements ReportService {
 
     }
 
-    @Override
-    public List<Equipment> getEquipmentsForProject(Integer projectId) {
-        Project project = projectRepository.findOne(projectId);
-        List<Equipment> equipmentList = new ArrayList<>();
-        if (project != null) {
-            project.getEquipments().forEach(equipment -> {
-                equipmentList.add(equipment);
-            });
-        } else {
-            log.error("::getNameToEquipmentMapForProject Unable to find any project with projectId: [" + projectId + "]");
-        }
-        return equipmentList;
-    }
+
 
 }
