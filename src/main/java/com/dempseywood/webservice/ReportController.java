@@ -53,29 +53,8 @@ public class ReportController {
             email = principal.getName();
         }
         Integer projectId = projectService.getProjectIdFromUserEmail(email);
-
         List<HaulSummary> summaryList = reportService.getSummaryList(projectId);
-        List<HaulSummary> summaryByMachine = summaryList.stream().sorted(Comparator.comparing(HaulSummary::getEquipment).thenComparing(HaulSummary::getLoadType)).collect(Collectors.toList());
-        List<HaulSummary> summaryByLoadType = summaryList.stream().sorted(Comparator.comparing(HaulSummary::getLoadType).thenComparing(HaulSummary::getEquipment)).collect(Collectors.toList());
-       Map<String, BaseLoadCountSummary> map = new HashMap<String, BaseLoadCountSummary>();
-
-        for(HaulSummary summary : summaryByMachine){
-            BaseLoadCountSummary group = map.get(summary.getEquipment());
-            if(group == null){
-                group = new BaseLoadCountSummary();
-                map.put(summary.getEquipment(), group);
-            }
-            group.add(summary);
-        }
-        BaseLoadCountSummary byMachineTable = new BaseLoadCountSummary();
-        map.entrySet().forEach(entry -> {
-            entry.getValue().compute();
-            byMachineTable.add(entry.getValue());
-        });
-        byMachineTable.compute();
-        model.put("byMachineTable", byMachineTable);
-        model.put("summaryByMachine", summaryByMachine);
-        model.put("summaryByLoadType", summaryByLoadType);
+        model.putAll(reportService.getLoadCoundVariableMap(summaryList));
         return "loadCountSummary";
     }
 

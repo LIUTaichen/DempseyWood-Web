@@ -1,6 +1,7 @@
 package com.dempseywood.model;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class BaseLoadCountSummary extends HaulSummary{
@@ -17,13 +18,17 @@ public class BaseLoadCountSummary extends HaulSummary{
 
     public void compute(){
         for(HaulSummary entry : entries){
+            this.setEquipment(entry.getEquipment());
+            this.setLoadType(entry.getLoadType());
             this.setLoadCount(this.getLoadCount() + entry.getLoadCount());
-            this.setVolume(entry.getVolume() + entry.getVolume());
-            this.setDuration(entry.getDuration() + entry.getDuration());
-            this.setCost(entry.getCost() + entry.getCost());
-            this.setRevenue(entry.getRevenue() + entry.getRevenue());
-            this.setProfit(entry.getProfit() + entry.getProfit());
+            this.setVolume(this.getVolume() + entry.getVolume());
+            this.setDuration(this.getDuration() + entry.getDuration());
+            this.setCost(this.getCost() + entry.getCost());
+            this.setRevenue(this.getRevenue() + entry.getRevenue());
+            this.setProfit(this.getProfit() + entry.getProfit());
         }
+
+
     }
 
     public void add(HaulSummary entry){

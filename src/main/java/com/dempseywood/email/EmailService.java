@@ -83,7 +83,7 @@ public class EmailService {
                 ex.printStackTrace();
             }
             InputStreamSource resource = new ByteArrayResource(os.toByteArray());
-            SimpleDateFormat sdf = new SimpleDateFormat("dd_mm_yyyy");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd_MM_yyyy");
             StringBuilder fileNameStringBuilder = new StringBuilder();
             fileNameStringBuilder.append("Daily_Report_");
             fileNameStringBuilder.append(sdf.format(new Date()));

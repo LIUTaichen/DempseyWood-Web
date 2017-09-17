@@ -25,4 +25,6 @@ public interface ReportService {
 
     String buildEmailContentFromSummary(List<HaulSummary> summaryList, String template);
 
+    Map<String, Object> getLoadCoundVariableMap(List<HaulSummary> summaryList);
+
 }

@@ -223,13 +223,59 @@ public class DefaultReportService implements ReportService {
 
     @Override
     public String buildEmailContentFromSummary(List<HaulSummary> summaryList, String template) {
-        List<HaulSummary> summaryByMachine = summaryList.stream().sorted(Comparator.comparing(HaulSummary::getEquipment).thenComparing(HaulSummary::getLoadType)).collect(Collectors.toList());
-        List<HaulSummary> summaryByLoadType = summaryList.stream().sorted(Comparator.comparing(HaulSummary::getLoadType).thenComparing(HaulSummary::getEquipment)).collect(Collectors.toList());
+
         Context context = new Context();
-        context.setVariable("summaryByMachine", summaryByMachine);
-        context.setVariable("summaryByLoadType", summaryByLoadType);
+        context.setVariables(getLoadCoundVariableMap(summaryList));
         return templateEngine.process(template, context);
 
+    }
+
+    @Override
+    public Map<String, Object> getLoadCoundVariableMap(List<HaulSummary> summaryList){
+        Map<String, Object> variableMap = new HashMap<String, Object>();
+
+        List<HaulSummary> summaryByMachine = summaryList.stream().sorted(Comparator.comparing(HaulSummary::getEquipment).thenComparing(HaulSummary::getLoadType)).collect(Collectors.toList());
+        List<HaulSummary> summaryByLoadType = summaryList.stream().sorted(Comparator.comparing(HaulSummary::getLoadType).thenComparing(HaulSummary::getEquipment)).collect(Collectors.toList());
+        Map<String, BaseLoadCountSummary> byMachineMap = new HashMap<String, BaseLoadCountSummary>();
+
+        for(HaulSummary summary : summaryByMachine){
+            BaseLoadCountSummary group = byMachineMap.get(summary.getEquipment());
+            if(group == null){
+                group = new BaseLoadCountSummary();
+                byMachineMap.put(summary.getEquipment(), group);
+            }
+            group.add(summary);
+        }
+        BaseLoadCountSummary byMachineTable = new BaseLoadCountSummary();
+        byMachineMap.entrySet().forEach(entry -> {
+            entry.getValue().compute();
+            byMachineTable.add(entry.getValue());
+        });
+        byMachineTable.compute();
+        byMachineTable.getEntries().sort(Comparator.comparing(HaulSummary::getEquipment));
+
+
+        Map<String, BaseLoadCountSummary> byLoadTypeMap = new HashMap<String, BaseLoadCountSummary>();
+
+        for(HaulSummary summary : summaryByLoadType){
+            BaseLoadCountSummary group = byLoadTypeMap.get(summary.getLoadType());
+            if(group == null){
+                group = new BaseLoadCountSummary();
+                byLoadTypeMap.put(summary.getLoadType(), group);
+            }
+            group.add(summary);
+        }
+        BaseLoadCountSummary byLoadTypeTable = new BaseLoadCountSummary();
+        byLoadTypeMap.entrySet().forEach(entry -> {
+            entry.getValue().compute();
+            byLoadTypeTable.add(entry.getValue());
+        });
+        byLoadTypeTable.compute();
+        byLoadTypeTable.getEntries().sort(Comparator.comparing(HaulSummary::getLoadType));
+
+        variableMap.put("byMachineTable", byMachineTable);
+        variableMap.put("byLoadTypeTable", byLoadTypeTable);
+        return  variableMap;
     }
 
 
