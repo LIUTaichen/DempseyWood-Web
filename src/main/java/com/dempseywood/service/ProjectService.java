@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dempseywood.model.Project;
-import com.dempseywood.model.ProjectManager;
+import com.dempseywood.model.Manager;
 import com.dempseywood.repository.ProjectManagerRepository;
 import com.dempseywood.repository.ProjectRepository;
 
@@ -36,17 +36,20 @@ public class ProjectService {
 	
 	@Transactional
 	public Integer getProjectIdFromUserEmail(String email){
-		ProjectManager manager = managerRepository.findOneByEmail(email);
+		Manager manager = managerRepository.findOneByEmail(email);
 		if(manager == null){
-			manager = new ProjectManager();
+			manager = new Manager();
 			manager.setEmail( email);
 			
 			Project project = new Project();
 			project = projectRepository.save(project);
-			manager.setProject(project);
+			manager.getProjects().add(project);
 			manager = managerRepository.save(manager);
 		}
-		return manager.getProject().getId();
+		if(manager.getProjects() == null || manager.getProjects().isEmpty()){
+			return 1;
+		}
+		return manager.getProjects().get(0).getId();
 		
 	}
 
@@ -71,6 +74,18 @@ public class ProjectService {
 			revenueScheule.put(cost.getTask(), cost.getRevenue());
 		}
 		return revenueScheule;
+	}
+
+	public List<String> getEmailOfProjectManagers(Integer projectId){
+		List<String> emails = new ArrayList<>();
+		Project project = projectRepository.findOne(projectId);
+		if(project == null || project.getManagers() == null || project.getManagers().isEmpty()){
+			//TODO:add logic to handle cases of no email address to send to
+			emails.add ("jason.liu@dempseywood.co.nz");
+		}else{
+			project.getManagers().forEach(manager -> emails.add(manager.getEmail()));
+		}
+		return emails;
 	}
 
 

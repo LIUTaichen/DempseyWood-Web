@@ -104,8 +104,8 @@ public class ReportController {
         Workbook workbook = reportService.writeReportForProject(statusList, haulList,  summaryList);
         String content = reportService.buildEmailContentFromSummary(summaryList, "loadCountSummary");
 
-
-        emailService.send(workbook, content );
+        String[] emails = (String[])projectService.getEmailOfProjectManagers(projectId).toArray();
+        emailService.send(workbook, content,  emails);
         return "email sent";
     }
 

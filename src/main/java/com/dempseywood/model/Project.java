@@ -35,11 +35,26 @@ public class Project {
                     referencedColumnName = "id"))
     private List<Equipment> equipments;
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "project_manager",
+            joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "manager_id",
+                    referencedColumnName = "id"))
+    private List<Manager> managers;
+
     public List<Equipment> getEquipments() {
         return equipments;
     }
 
     public void setEquipments(List<Equipment> equipments) {
         this.equipments = equipments;
+    }
+
+    public List<Manager> getManagers() {
+        return managers;
+    }
+
+    public void setManagers(List<Manager> managers) {
+        this.managers = managers;
     }
 }

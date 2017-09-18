@@ -45,10 +45,9 @@ public class EmailService {
         emailSender.send(message);
     }
 
-    public void send(Workbook workbook, String content, String recipient){
-        String toEmailAddress = recipient;
+    public void send(Workbook workbook, String content, String[] recipient){
         String messageString = content;
-        MimeMessage mimeMessage = getMimeMessage(toEmailAddress , messageString, workbook);
+        MimeMessage mimeMessage = getMimeMessage(recipient , messageString, workbook);
 
 
         try {
@@ -57,12 +56,8 @@ public class EmailService {
             logger.error(ex);
         }
     }
-   public void send(Workbook workbook, String content){
-        String toEmailAddress = "jason.liu@dempseywood.co.nz";
-        send(workbook, content,toEmailAddress );
-   }
 
-    private MimeMessage getMimeMessage(String toEmailAddress, String messageString, Workbook workbook) {
+    private MimeMessage getMimeMessage(String[] toEmailAddress, String messageString, Workbook workbook) {
         logger.info("constructing and sending email.");
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         try {

@@ -1,14 +1,10 @@
 package com.dempseywood.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
-public class ProjectManager {
+public class Manager {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -17,10 +13,9 @@ public class ProjectManager {
     private String email;
     
     private String name;
-    
-    @ManyToOne
-    @JoinColumn(name="project_id")
-    private Project project;
+
+	@ManyToMany(mappedBy = "managers")
+	private List<Project> projects;
 
 	public Integer getId() {
 		return id;
@@ -46,14 +41,11 @@ public class ProjectManager {
 		this.name = name;
 	}
 
-	public Project getProject() {
-		return project;
+	public List<Project> getProjects() {
+		return projects;
 	}
 
-	public void setProject(Project project) {
-		this.project = project;
+	public void setProjects(List<Project> projects) {
+		this.projects = projects;
 	}
-    
-    
-
 }

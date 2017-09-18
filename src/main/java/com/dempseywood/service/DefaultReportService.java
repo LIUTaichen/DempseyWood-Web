@@ -126,8 +126,8 @@ public class DefaultReportService implements ReportService {
         EquipmentStatus unloadingEvent = null;
         String equipmentStringForCurrentHaul = "";
         for (EquipmentStatus event: statusList) {
-            if(!isValidEquipmentStatus(event )){
-                log.info("error processing record: " + event);
+            if(!isValidEquipmentStatus(event ) || !revenueSchedule.containsKey(event.getTask()) || !equipmentMap.containsKey(event.getEquipment())) {
+                log.info("error processing record: " + event.toString());
                 continue;
             }
             //next entry is for another equipment
@@ -160,10 +160,18 @@ public class DefaultReportService implements ReportService {
                 haul.setDuration(duration);
                 haul.setEquipment(equipment.getName());
                 haul.setLoadType(loadingEvent.getTask());
-                haul.setVolume(equipment.getCapacity());
-                double cost = equipment.getCostPerHour() / MILLISECONDS_IN_HOUR * Duration.between(haulStartTime, haulFinishTime).toMillis();
+                if(equipment.getCapacity() == null){
+                    haul.setVolume(0);
+                }else {
+                    haul.setVolume(equipment.getCapacity());
+                }
+                double costPerHour = 0;
+                if(equipment.getCostPerHour() != null){
+                    costPerHour = equipment.getCostPerHour();
+                }
+                double cost = costPerHour / MILLISECONDS_IN_HOUR * Duration.between(haulStartTime, haulFinishTime).toMillis();
                 haul.setCost(cost);
-                double revenue = equipment.getCapacity() * revenueSchedule.get(loadingEvent.getTask());
+                double revenue = haul.getVolume() * revenueSchedule.get(loadingEvent.getTask());
                 haul.setRevenue(revenue);
                 double profit = revenue - cost;
                 haul.setProfit(profit);

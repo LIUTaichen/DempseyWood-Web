@@ -20,6 +20,7 @@ public class Equipment {
 
     @ManyToMany(mappedBy = "equipments")
     private List<Project> projects;
+
     public Equipment(String name, Double capacity, Double costPerHour) {
         this.name = name;
         this.capacity = capacity;
@@ -83,5 +84,18 @@ public class Equipment {
 
     public void setProjects(List<Project> projects) {
         this.projects = projects;
+    }
+
+    @Override
+    public String toString() {
+        return "Equipment{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", fleetId='" + fleetId + '\'' +
+                ", capacity=" + capacity +
+                ", type='" + type + '\'' +
+                ", costPerHour=" + costPerHour +
+                ", projects=" + projects +
+                '}';
     }
 }
