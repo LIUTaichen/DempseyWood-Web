@@ -23,9 +23,9 @@
         <th width="80">Profit</th>
     </tr>
     </thead>
-    <tbody>
-    <th:block th:each="sum : ${byMachineTable.entries}">
 
+    <th:block th:each="sum : ${byMachineTable.entries}">
+        <tbody>
         <tr th:each="entry, itrStat:${ sum.entries}">
             <th:block th:if="${itrStat.index == 0}">
                 <td th:text="${entry.equipment}" align="center" th:rowspan="${itrStat.size + 1}">DT5</td>
@@ -45,9 +45,9 @@
             </td>
         </tr>
 
-        <tr>
+        <tr style="font-weight: bold" >
 
-            <td th:text="Subtotal" align="center">Subtotal</td>
+            <td  align="center"><b>Subtotal</b></td>
             <td th:text="${sum.loadCount}" align="center">20</td>
             <td th:text="${sum.volume}" align="center">200</td>
             <td th:text="${sum.duration}" align="center">3.5</td>
@@ -59,8 +59,10 @@
                 align="center">50
             </td>
         </tr>
+        </tbody>
     </th:block>
-    <tr><td th:text="Total" align="center" th:colspan="2">Total</td>
+    <tbody>
+    <tr style="font-weight: bold"><td  align="center" th:colspan="2"><b>Total</b></td>
         <td th:text="${byMachineTable.loadCount}" align="center">20</td>
         <td th:text="${byMachineTable.volume}" align="center">200</td>
         <td th:text="${byMachineTable.duration}" align="center">3.5</td>
@@ -87,9 +89,9 @@
         <th width="80">Profit</th>
     </tr>
     </thead>
-    <tbody>
-    <th:block th:each="sum : ${byLoadTypeTable.entries}">
 
+    <th:block th:each="sum : ${byLoadTypeTable.entries}">
+        <tbody>
         <tr th:each="entry, itrStat:${ sum.entries}">
             <th:block th:if="${itrStat.index == 0}">
                 <td th:text="${entry.loadType}" align="center" th:rowspan="${itrStat.size + 1}">DT5</td>
@@ -109,9 +111,9 @@
             </td>
         </tr>
 
-        <tr>
+        <tr style="font-weight: bold">
 
-            <td th:text="Subtotal" align="center" >Subtotal</td>
+            <td  align="center"  ><b>Subtotal</b></td>
             <td th:text="${sum.loadCount}" align="center">20</td>
             <td th:text="${sum.volume}" align="center">200</td>
             <td th:text="${sum.duration}" align="center">3.5</td>
@@ -123,8 +125,10 @@
                 align="center">50
             </td>
         </tr>
+        </tbody>
     </th:block>
-    <tr><td th:text="Total" align="center" th:colspan="2">Total</td>
+    <tbody>
+    <tr style="font-weight: bold"><td align="center" th:colspan="2"><b>Total</b></td>
         <td th:text="${byLoadTypeTable.loadCount}" align="center">20</td>
         <td th:text="${byLoadTypeTable.volume}" align="center">200</td>
         <td th:text="${byLoadTypeTable.duration}" align="center">3.5</td>

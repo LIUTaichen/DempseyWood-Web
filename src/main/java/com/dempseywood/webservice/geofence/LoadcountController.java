@@ -88,7 +88,7 @@ public class LoadcountController {
 		model.put("tracks", trackList);
 		model.put("coordinates", readings);
 
-		return "welcome";
+		return "geofences";
 	}
 
 	@RequestMapping(path = "/loadcount", method = RequestMethod.GET)

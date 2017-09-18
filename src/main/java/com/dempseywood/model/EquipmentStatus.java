@@ -116,5 +116,18 @@ public class EquipmentStatus {
 		this.imei = imei;
 	}
 
-    
+    @Override
+    public String toString() {
+        return "EquipmentStatus{" +
+                "id=" + id +
+                ", equipment='" + equipment + '\'' +
+                ", task='" + task + '\'' +
+                ", operator='" + operator + '\'' +
+                ", status='" + status + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", timestamp=" + timestamp +
+                ", imei='" + imei + '\'' +
+                '}';
+    }
 }

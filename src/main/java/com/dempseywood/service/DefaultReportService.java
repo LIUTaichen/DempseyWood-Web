@@ -126,8 +126,17 @@ public class DefaultReportService implements ReportService {
         EquipmentStatus unloadingEvent = null;
         String equipmentStringForCurrentHaul = "";
         for (EquipmentStatus event: statusList) {
-            if(!isValidEquipmentStatus(event ) || !revenueSchedule.containsKey(event.getTask()) || !equipmentMap.containsKey(event.getEquipment())) {
+            if(!isValidEquipmentStatus(event )){
                 log.info("error processing record: " + event.toString());
+                log.info("invalid equipment status");
+                continue;
+            }else if( !revenueSchedule.containsKey(event.getTask())){
+                log.info("error processing record: " + event.toString());
+                log.info("invalid task " + event.getTask());
+                continue;
+            } else if (!equipmentMap.containsKey(event.getEquipment())) {
+                log.info("error processing record: " + event.toString());
+                log.info("invalid equipment " + event.getEquipment());
                 continue;
             }
             //next entry is for another equipment

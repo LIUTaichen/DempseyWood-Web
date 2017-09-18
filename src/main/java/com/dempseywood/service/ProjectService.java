@@ -3,6 +3,7 @@ package com.dempseywood.service;
 import com.dempseywood.model.CostSchedule;
 import com.dempseywood.model.Equipment;
 import com.dempseywood.repository.CostScheduleRepository;
+import org.aspectj.weaver.NameMangler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,11 +41,12 @@ public class ProjectService {
 		if(manager == null){
 			manager = new Manager();
 			manager.setEmail( email);
-			
-			Project project = new Project();
-			project = projectRepository.save(project);
-			manager.getProjects().add(project);
 			manager = managerRepository.save(manager);
+			Project project = new Project();
+
+			project.setManagers(new ArrayList<Manager>());
+			project.getManagers().add(manager);
+			project = projectRepository.save(project);
 		}
 		if(manager.getProjects() == null || manager.getProjects().isEmpty()){
 			return 1;

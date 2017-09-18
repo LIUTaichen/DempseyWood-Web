@@ -103,8 +103,9 @@ public class ReportController {
         List<HaulSummary> summaryList = reportService.getSummaryFromHauls(haulList);
         Workbook workbook = reportService.writeReportForProject(statusList, haulList,  summaryList);
         String content = reportService.buildEmailContentFromSummary(summaryList, "loadCountSummary");
-
-        String[] emails = (String[])projectService.getEmailOfProjectManagers(projectId).toArray();
+        List<String> emailList = projectService.getEmailOfProjectManagers(projectId);
+        String[] emails = new String[emailList.size()];
+        emails = emailList.toArray(emails);
         emailService.send(workbook, content,  emails);
         return "email sent";
     }
