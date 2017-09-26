@@ -45,9 +45,9 @@ public class EmailService {
         emailSender.send(message);
     }
 
-    public void send(Workbook workbook, String content, String[] recipient){
+    public void send(Workbook workbook, String content, String[] recipient, Date forDate , String projectName){
         String messageString = content;
-        MimeMessage mimeMessage = getMimeMessage(recipient , messageString, workbook);
+        MimeMessage mimeMessage = getMimeMessage(recipient , messageString, workbook, forDate, projectName);
 
 
         try {
@@ -57,14 +57,13 @@ public class EmailService {
         }
     }
 
-    private MimeMessage getMimeMessage(String[] toEmailAddress, String messageString, Workbook workbook) {
+    private MimeMessage getMimeMessage(String[] toEmailAddress, String messageString, Workbook workbook, Date forDate, String projectName) {
         logger.info("constructing and sending email.");
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-            Date date = new Date();
             SimpleDateFormat df = new SimpleDateFormat("EEE dd/MM/yyyy");
-            helper.setSubject("Load count for Murphys Road "+ df.format(date));
+            helper.setSubject("Load count for "+ projectName + " " + df.format(forDate));
             helper.setTo(toEmailAddress);
             helper.setText(
                     messageString, true);
@@ -81,7 +80,7 @@ public class EmailService {
             SimpleDateFormat sdf = new SimpleDateFormat("dd_MM_yyyy");
             StringBuilder fileNameStringBuilder = new StringBuilder();
             fileNameStringBuilder.append("Daily_Report_");
-            fileNameStringBuilder.append(sdf.format(new Date()));
+            fileNameStringBuilder.append(sdf.format(forDate));
             fileNameStringBuilder.append(".xlsx");
             helper.addAttachment(fileNameStringBuilder.toString(), resource);
         } catch (MessagingException e) {

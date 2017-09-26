@@ -5,6 +5,7 @@ import com.dempseywood.model.EquipmentStatus;
 import com.dempseywood.model.Haul;
 import com.dempseywood.model.HaulSummary;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.thymeleaf.context.Context;
 
 import java.util.Date;
 import java.util.List;
@@ -23,8 +24,8 @@ public interface ReportService {
 
     List<EquipmentStatus> getEquipmentStatusByProjectIdAndTimestamp(Integer projectId, Date startTime, Date endTime );
 
-    String buildEmailContentFromSummary(List<HaulSummary> summaryList, String template);
+    String buildEmailContentFromSummary(Map<String, Object> variableMap, String template);
 
-    Map<String, Object> getLoadCoundVariableMap(List<HaulSummary> summaryList);
+    Map<String, Object> getLoadCountVariableMap(List<HaulSummary> summaryList);
 
 }

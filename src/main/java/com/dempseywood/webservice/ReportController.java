@@ -5,14 +5,13 @@ import com.dempseywood.model.*;
 import com.dempseywood.repository.EquipmentStatusRepository;
 import com.dempseywood.service.ProjectService;
 import com.dempseywood.service.ReportService;
+import com.dempseywood.util.DateTimeUtil;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -20,7 +19,6 @@ import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Controller
@@ -52,9 +50,11 @@ public class ReportController {
         if(principal != null){
             email = principal.getName();
         }
-        Integer projectId = projectService.getProjectIdFromUserEmail(email);
+        Project project = projectService.getProjectFromUserEmail(email);
+        Integer projectId = project.getId();
         List<HaulSummary> summaryList = reportService.getSummaryList(projectId);
-        model.putAll(reportService.getLoadCoundVariableMap(summaryList));
+        model.putAll(reportService.getLoadCountVariableMap(summaryList));
+        model.put("projectName",project.getName() );
         return "loadCountSummary";
     }
 
@@ -89,24 +89,33 @@ public class ReportController {
     @RequestMapping(path="api/status/email", method=RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
-    String sendEmail(Principal principal){
+    String sendEmail(Principal principal, @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date fromDate, @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date toDate ){
         //TODO: remove the hardcoded email
         String email = "jason.liu@dempseywood.co.nz";
-        if(principal != null){
+            if(principal != null){
             email = principal.getName();
         }
-        Integer projectId = projectService.getProjectIdFromUserEmail(email);
-        List<EquipmentStatus> statusList = reportService.getEquipmentStatusForTodayByProjectId(projectId);
+        if(fromDate == null) {
+            fromDate = new Date();
+            toDate = new Date();
+        } else if(toDate == null){
+            toDate = fromDate;
+        }
+        Project project = projectService.getProjectFromUserEmail(email);
+        Integer projectId = project.getId();
+        List<EquipmentStatus> statusList = reportService.getEquipmentStatusByProjectIdAndTimestamp(projectId, DateTimeUtil.getInstance().getTimeOfBeginningOfToday(fromDate),DateTimeUtil.getInstance().getTimeOfEndOfToday(toDate));
         Map<String, Equipment> equipmentMap = projectService.getEquipmentsForProject(projectId).stream().collect(Collectors.toMap(Equipment::getName, p -> p));
         Map<String, Double> taskToRevenueMap = projectService.getTaskRevenueMapForProject(projectId);
         List<Haul> haulList = reportService.convertEventsToHauls(statusList,taskToRevenueMap,equipmentMap );
         List<HaulSummary> summaryList = reportService.getSummaryFromHauls(haulList);
         Workbook workbook = reportService.writeReportForProject(statusList, haulList,  summaryList);
-        String content = reportService.buildEmailContentFromSummary(summaryList, "loadCountSummary");
+        Map<String, Object> variableMap = reportService.getLoadCountVariableMap(summaryList);
+        variableMap.put("projectName",project.getName() );
+        String content = reportService.buildEmailContentFromSummary(variableMap, "loadCountSummary");
         List<String> emailList = projectService.getEmailOfProjectManagers(projectId);
         String[] emails = new String[emailList.size()];
         emails = emailList.toArray(emails);
-        emailService.send(workbook, content,  emails);
+        emailService.send(workbook, content,  emails,fromDate, project.getName());
         return "email sent";
     }
 

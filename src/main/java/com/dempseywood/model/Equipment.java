@@ -11,15 +11,11 @@ public class Equipment {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
     private String name;
+    @Column(unique = true)
     private String fleetId;
     private Double capacity;
-    private String type;
+    private String category;
     private Double costPerHour;
-
-
-
-    @ManyToMany(mappedBy = "equipments")
-    private List<Project> projects;
 
     public Equipment(String name, Double capacity, Double costPerHour) {
         this.name = name;
@@ -54,12 +50,12 @@ public class Equipment {
         this.fleetId = fleetId;
     }
 
-    public String getType() {
-        return type;
+    public String getCategory() {
+        return category;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public Double getCapacity() {
@@ -78,14 +74,6 @@ public class Equipment {
         this.costPerHour = costPerHour;
     }
 
-    public List<Project> getProjects() {
-        return projects;
-    }
-
-    public void setProjects(List<Project> projects) {
-        this.projects = projects;
-    }
-
     @Override
     public String toString() {
         return "Equipment{" +
@@ -93,9 +81,8 @@ public class Equipment {
                 ", name='" + name + '\'' +
                 ", fleetId='" + fleetId + '\'' +
                 ", capacity=" + capacity +
-                ", type='" + type + '\'' +
+                ", category='" + category + '\'' +
                 ", costPerHour=" + costPerHour +
-                ", projects=" + projects +
                 '}';
     }
 }

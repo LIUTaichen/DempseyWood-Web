@@ -7,7 +7,7 @@
 </head>
 <body>
 <p>Hi,</p>
-<p>The following tables are summaries of the load counts for Murphys Road. More details are available in the spreadsheet
+<p>The following tables are summaries of the load counts for <span th:text="${projectName}"></span>. More details are available in the spreadsheet
     attached.</p>
 <p>Load counts by machine: </p>
 <table border="1" style="border-collapse: collapse;">
@@ -39,7 +39,7 @@
                 align="center" width="80">
                 350
             </td>
-            <td th:text="${entry.revenue}" align="center" width="80">400</td>
+            <td th:text="${entry.revenue} % 1 == 0? ${entry.revenue} :${#numbers.formatDecimal(entry.revenue, 0, 2)}" align="center" width="80">400</td>
             <td th:text="${entry.profit} % 1 == 0? ${entry.profit} :${#numbers.formatDecimal(entry.profit, 0, 2)}"
                 align="center" width="80">50
             </td>
@@ -54,7 +54,7 @@
             <td th:text="${sum.cost} % 1 == 0? ${sum.cost} :${#numbers.formatDecimal(sum.cost, 0, 2)}" align="center">
                 350
             </td>
-            <td th:text="${sum.revenue}" align="center">400</td>
+            <td th:text="${sum.revenue} % 1 == 0? ${sum.revenue} :${#numbers.formatDecimal(sum.revenue, 0, 2)}" align="center" width="80">400</td>
             <td th:text="${sum.profit} % 1 == 0? ${sum.profit} :${#numbers.formatDecimal(sum.profit, 0, 2)}"
                 align="center">50
             </td>
@@ -69,13 +69,13 @@
         <td th:text="${byMachineTable.cost} % 1 == 0? ${byMachineTable.cost} :${#numbers.formatDecimal(byMachineTable.cost, 0, 2)}" align="center">
             350
         </td>
-        <td th:text="${byMachineTable.revenue}" align="center">400</td>
+        <td th:text="${byMachineTable.revenue} % 1 == 0? ${byMachineTable.revenue} :${#numbers.formatDecimal(byMachineTable.revenue, 0, 2)}" align="center" width="80">400</td>
         <td th:text="${byMachineTable.profit} % 1 == 0? ${byMachineTable.profit} :${#numbers.formatDecimal(byMachineTable.profit, 0, 2)}"
             align="center">50
         </td></tr>
     </tbody>
 </table>
-<p>Load counts by load type: </p>
+<p>Load counts by load category: </p>
 <table border="1" style="border-collapse: collapse;">
     <thead>
     <tr>
@@ -105,7 +105,7 @@
                 align="center" width="80">
                 350
             </td>
-            <td th:text="${entry.revenue}" align="center" width="80">400</td>
+            <td th:text="${entry.revenue} % 1 == 0? ${entry.revenue} :${#numbers.formatDecimal(entry.revenue, 0, 2)}" align="center" width="80">400</td>
             <td th:text="${entry.profit} % 1 == 0? ${entry.profit} :${#numbers.formatDecimal(entry.profit, 0, 2)}"
                 align="center" width="80">50
             </td>
@@ -120,7 +120,7 @@
             <td th:text="${sum.cost} % 1 == 0? ${sum.cost} :${#numbers.formatDecimal(sum.cost, 0, 2)}" align="center">
                 350
             </td>
-            <td th:text="${sum.revenue}" align="center">400</td>
+            <td th:text="${sum.revenue} % 1 == 0? ${sum.revenue} :${#numbers.formatDecimal(sum.revenue, 0, 2)}" align="center" width="80">400</td>
             <td th:text="${sum.profit} % 1 == 0? ${sum.profit} :${#numbers.formatDecimal(sum.profit, 0, 2)}"
                 align="center">50
             </td>
@@ -135,7 +135,7 @@
         <td th:text="${byLoadTypeTable.cost} % 1 == 0? ${byLoadTypeTable.cost} :${#numbers.formatDecimal(byLoadTypeTable.cost, 0, 2)}" align="center">
             350
         </td>
-        <td th:text="${byLoadTypeTable.revenue}" align="center">400</td>
+        <td th:text="${byLoadTypeTable.revenue} % 1 == 0? ${byLoadTypeTable.revenue} :${#numbers.formatDecimal(byLoadTypeTable.revenue, 0, 2)}" align="center" width="80">400</td>
         <td th:text="${byLoadTypeTable.profit} % 1 == 0? ${byLoadTypeTable.profit} :${#numbers.formatDecimal(byLoadTypeTable.profit, 0, 2)}"
             align="center">50
         </td></tr>

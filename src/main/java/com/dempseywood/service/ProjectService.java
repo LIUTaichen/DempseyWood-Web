@@ -90,5 +90,24 @@ public class ProjectService {
 		return emails;
 	}
 
+	@Transactional
+	public Project getProjectFromUserEmail(String email){
+		Manager manager = managerRepository.findOneByEmail(email);
+		if(manager == null){
+			manager = new Manager();
+			manager.setEmail( email);
+			manager = managerRepository.save(manager);
+			Project project = new Project();
+
+			project.setManagers(new ArrayList<Manager>());
+			project.getManagers().add(manager);
+			project = projectRepository.save(project);
+		}
+		if(manager.getProjects() == null || manager.getProjects().isEmpty()){
+			return projectRepository.findOne(2);
+		}
+		return manager.getProjects().get(0);
+
+	}
 
 }

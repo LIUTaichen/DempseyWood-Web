@@ -1,10 +1,9 @@
 package com.dempseywood.service;
 
 import com.dempseywood.model.*;
-import com.dempseywood.repository.CostScheduleRepository;
-import com.dempseywood.repository.EquipmentRepository;
 import com.dempseywood.repository.EquipmentStatusRepository;
 import com.dempseywood.repository.ProjectRepository;
+import com.dempseywood.util.DateTimeUtil;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
@@ -29,8 +28,6 @@ public class DefaultReportService implements ReportService {
 
     @Autowired
     private EquipmentStatusRepository equipmentStatusRepository;
-    @Autowired
-    private EquipmentRepository equipmentRepository;
 
     @Autowired
     private ProjectRepository projectRepository;
@@ -207,7 +204,7 @@ public class DefaultReportService implements ReportService {
     @Override
     public List<EquipmentStatus> getEquipmentStatusForTodayByProjectId(Integer projectId) {
         Date time = new Date();
-        Date startOfDay = getTimeOfBeginningOfToday(time);
+        Date startOfDay = DateTimeUtil.getInstance().getTimeOfBeginningOfToday(time);
         return getEquipmentStatusByProjectIdAndTimestamp(projectId, startOfDay, time );
     }
 
@@ -228,27 +225,19 @@ public class DefaultReportService implements ReportService {
         return resultList;
     }
 
-    private Date getTimeOfBeginningOfToday(Date time) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(time);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        return cal.getTime();
-    }
+
 
     @Override
-    public String buildEmailContentFromSummary(List<HaulSummary> summaryList, String template) {
-
+    public String buildEmailContentFromSummary(Map<String, Object> variableMap, String template) {
         Context context = new Context();
-        context.setVariables(getLoadCoundVariableMap(summaryList));
+        context.setVariables(variableMap);
         return templateEngine.process(template, context);
 
     }
 
+
     @Override
-    public Map<String, Object> getLoadCoundVariableMap(List<HaulSummary> summaryList){
+    public Map<String, Object> getLoadCountVariableMap(List<HaulSummary> summaryList){
         Map<String, Object> variableMap = new HashMap<String, Object>();
 
         List<HaulSummary> summaryByMachine = summaryList.stream().sorted(Comparator.comparing(HaulSummary::getEquipment).thenComparing(HaulSummary::getLoadType)).collect(Collectors.toList());

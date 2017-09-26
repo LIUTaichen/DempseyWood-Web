@@ -14,4 +14,8 @@ public interface EquipmentStatusRepository extends CrudRepository<EquipmentStatu
     List<EquipmentStatus> findByTimestampBetweenOrderByEquipmentDescTimestamp(Date startTime, Date endtTime);
 
     List<EquipmentStatus> findByTimestampBetweenAndEquipmentInOrderByEquipmentDescTimestamp(Date startOfDay, Date time, List<String> equipmentNames);
+
+    List<EquipmentStatus> findByTimestampAfterAndImeiOrderByTimestampDesc(Date startOfDay, String imei);
+
+    EquipmentStatus findTopByImeiOrderByTimestampDesc(String imei);
 }
