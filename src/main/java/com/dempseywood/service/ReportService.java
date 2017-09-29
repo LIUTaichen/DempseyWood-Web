@@ -28,4 +28,6 @@ public interface ReportService {
 
     Map<String, Object> getLoadCountVariableMap(List<HaulSummary> summaryList);
 
+    void sendReportForProject(Integer projectId, Date startTime, Date endTime);
+
 }

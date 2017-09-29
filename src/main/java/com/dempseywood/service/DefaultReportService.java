@@ -1,5 +1,6 @@
 package com.dempseywood.service;
 
+import com.dempseywood.email.EmailService;
 import com.dempseywood.model.*;
 import com.dempseywood.repository.EquipmentStatusRepository;
 import com.dempseywood.repository.ProjectRepository;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -35,6 +37,9 @@ public class DefaultReportService implements ReportService {
     private TemplateEngine templateEngine;
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private EmailService emailService;
 
 
     @Override
@@ -284,6 +289,24 @@ public class DefaultReportService implements ReportService {
         return  variableMap;
     }
 
+    @Override
+    @Transactional
+    public void sendReportForProject(Integer projectId, Date startTime, Date endTime) {
+        Project project = projectRepository.findOne(projectId);
+        List<EquipmentStatus> statusList = this.getEquipmentStatusByProjectIdAndTimestamp(projectId, startTime, endTime);
+        Map<String, Equipment> equipmentMap = projectService.getEquipmentsForProject(projectId).stream().collect(Collectors.toMap(Equipment::getName, p -> p));
+        Map<String, Double> taskToRevenueMap = projectService.getTaskRevenueMapForProject(projectId);
+        List<Haul> haulList = this.convertEventsToHauls(statusList,taskToRevenueMap,equipmentMap );
+        List<HaulSummary> summaryList = this.getSummaryFromHauls(haulList);
+        Workbook workbook = this.writeReportForProject(statusList, haulList,  summaryList);
+        Map<String, Object> variableMap = this.getLoadCountVariableMap(summaryList);
+        variableMap.put("projectName",project.getName() );
+        String content = this.buildEmailContentFromSummary(variableMap, "loadCountSummary");
+        List<String> emailList = projectService.getEmailOfProjectManagers(projectId);
+        String[] emails = new String[emailList.size()];
+        emails = emailList.toArray(emails);
+        emailService.send(workbook, content,  emails,startTime, project.getName());
+    }
 
 
 }

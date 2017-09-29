@@ -34,8 +34,7 @@ public class ReportController {
     private EquipmentStatusRepository equipmentStatusRepository;
 
 
-    @Autowired
-    private EmailService emailService;
+
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -103,19 +102,7 @@ public class ReportController {
         }
         Project project = projectService.getProjectFromUserEmail(email);
         Integer projectId = project.getId();
-        List<EquipmentStatus> statusList = reportService.getEquipmentStatusByProjectIdAndTimestamp(projectId, DateTimeUtil.getInstance().getTimeOfBeginningOfToday(fromDate),DateTimeUtil.getInstance().getTimeOfEndOfToday(toDate));
-        Map<String, Equipment> equipmentMap = projectService.getEquipmentsForProject(projectId).stream().collect(Collectors.toMap(Equipment::getName, p -> p));
-        Map<String, Double> taskToRevenueMap = projectService.getTaskRevenueMapForProject(projectId);
-        List<Haul> haulList = reportService.convertEventsToHauls(statusList,taskToRevenueMap,equipmentMap );
-        List<HaulSummary> summaryList = reportService.getSummaryFromHauls(haulList);
-        Workbook workbook = reportService.writeReportForProject(statusList, haulList,  summaryList);
-        Map<String, Object> variableMap = reportService.getLoadCountVariableMap(summaryList);
-        variableMap.put("projectName",project.getName() );
-        String content = reportService.buildEmailContentFromSummary(variableMap, "loadCountSummary");
-        List<String> emailList = projectService.getEmailOfProjectManagers(projectId);
-        String[] emails = new String[emailList.size()];
-        emails = emailList.toArray(emails);
-        emailService.send(workbook, content,  emails,fromDate, project.getName());
+        reportService.sendReportForProject(projectId, DateTimeUtil.getInstance().getTimeOfBeginningOfToday(fromDate), DateTimeUtil.getInstance().getTimeOfEndOfToday(toDate));
         return "email sent";
     }
 

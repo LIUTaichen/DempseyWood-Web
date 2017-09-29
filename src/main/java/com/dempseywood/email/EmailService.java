@@ -4,6 +4,7 @@ import com.dempseywood.webservice.equipmentstatus.DailyExcelReportView;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
@@ -20,6 +21,7 @@ import javax.mail.internet.MimeMessage;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 
 @Service
@@ -33,6 +35,8 @@ public class EmailService {
 
     @Autowired
     private DailyExcelReportView report;
+
+    @Value("${client.time.zone}") String clientTimeZone;
 
     public void sendMail(String from, String to, String subject, String msg) {
 
@@ -63,6 +67,7 @@ public class EmailService {
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
             SimpleDateFormat df = new SimpleDateFormat("EEE dd/MM/yyyy");
+            df.setTimeZone(TimeZone.getTimeZone(clientTimeZone));
             helper.setSubject("Load count for "+ projectName + " " + df.format(forDate));
             helper.setTo(toEmailAddress);
             helper.setText(
@@ -78,6 +83,8 @@ public class EmailService {
             }
             InputStreamSource resource = new ByteArrayResource(os.toByteArray());
             SimpleDateFormat sdf = new SimpleDateFormat("dd_MM_yyyy");
+            sdf.setTimeZone(TimeZone.getTimeZone(clientTimeZone));
+            //sdf.setTimeZone();
             StringBuilder fileNameStringBuilder = new StringBuilder();
             fileNameStringBuilder.append("Daily_Report_");
             fileNameStringBuilder.append(sdf.format(forDate));

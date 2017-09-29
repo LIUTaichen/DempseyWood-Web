@@ -1,13 +1,20 @@
 package com.dempseywood.service;
 
 import com.dempseywood.model.EquipmentStatus;
+import com.dempseywood.util.DateTimeUtil;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-
 public class EventsSheetWriter extends SheetWriter{
+
+
+   private String clientTimeZone = "NZ";
 
     public EventsSheetWriter(String sheetName){
         this.sheetName = sheetName;
@@ -15,7 +22,7 @@ public class EventsSheetWriter extends SheetWriter{
 
     public void writeSheet(Workbook workbook, List<EquipmentStatus> statusList){
         Sheet sheet = workbook.createSheet(sheetName);
-        sheet.setDefaultColumnWidth(20);
+        sheet.setDefaultColumnWidth(25);
 
         // create style for header cells
         CellStyle headerStyle = workbook.createCellStyle();
@@ -58,7 +65,13 @@ public class EventsSheetWriter extends SheetWriter{
             row.createCell(currentColumn++).setCellValue(status.getTask());
             row.createCell(currentColumn++).setCellValue(status.getStatus());
             Cell timeCell = row.createCell(currentColumn++);
-            timeCell.setCellValue(status.getTimestamp());
+            Date timestamp = status.getTimestamp();
+            try {
+                Date convertedDate = DateTimeUtil.getInstance().convertToClientLocalDate(timestamp);
+                timeCell.setCellValue(DateUtil.getExcelDate(convertedDate));
+            }catch(Exception e){
+                e.printStackTrace();
+            }
 
             timeCell.setCellStyle(dateCellStyle);
             currentColumn =0;

@@ -4,6 +4,7 @@ import com.dempseywood.model.CostSchedule;
 import com.dempseywood.model.Equipment;
 import com.dempseywood.model.EquipmentStatus;
 import com.dempseywood.model.Haul;
+import com.dempseywood.util.DateTimeUtil;
 import com.dempseywood.webservice.geofence.TruckStatus;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -14,10 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.dempseywood.webservice.geofence.TruckStatus.UNLOADED;
 
@@ -70,11 +68,23 @@ public class HaulsSheetWriter extends SheetWriter{
 
                 Row row = sheet.createRow(currentRow++);
                 currentColumn = 0;
+
                 Cell timeCell = row.createCell(currentColumn++);
-                timeCell.setCellValue(haul.getLoadTime());
+                try {
+                    Date convertedDate = DateTimeUtil.getInstance().convertToClientLocalDate(haul.getLoadTime());
+                    timeCell.setCellValue(DateUtil.getExcelDate(convertedDate));
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+
                 timeCell.setCellStyle(dateCellStyle);
                 timeCell = row.createCell(currentColumn++);
-                timeCell.setCellValue(haul.getUnloadTime());
+                try {
+                    Date convertedDate = DateTimeUtil.getInstance().convertToClientLocalDate(haul.getUnloadTime());
+                    timeCell.setCellValue(DateUtil.getExcelDate(convertedDate));
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
                 timeCell.setCellStyle(dateCellStyle);
                 row.createCell(currentColumn++).setCellValue(haul.getDuration());
                 row.createCell(currentColumn++).setCellValue(haul.getEquipment());

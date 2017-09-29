@@ -13,12 +13,14 @@ import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
 import java.util.Arrays;
 
 @SpringBootApplication
 @EnableJpaRepositories
+@EnableScheduling
 public class Application extends SpringBootServletInitializer{
 
     public Application() {
