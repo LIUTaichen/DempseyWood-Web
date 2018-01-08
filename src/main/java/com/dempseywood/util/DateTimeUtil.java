@@ -51,6 +51,7 @@ public class DateTimeUtil {
         Calendar cal = Calendar.getInstance();
         cal.setTime(serverLocalTime);
         cal.setTimeZone(TimeZone.getTimeZone("NZ"));
+        cal.get(Calendar.HOUR_OF_DAY);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
@@ -62,6 +63,21 @@ public class DateTimeUtil {
         Calendar cal = Calendar.getInstance();
         cal.setTime(inputTime);
         cal.add(Calendar.HOUR_OF_DAY, -24);
+        return cal.getTime();
+    }
+
+    public Date getTimeOneDayLater(Date inputTime){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(inputTime);
+        cal.add(Calendar.HOUR_OF_DAY, 24);
+        return cal.getTime();
+    }
+
+    public Date getNextNZMidNight(Date utcTime) {
+        Date lastNzTimeMidnightInUTC = this.getLastNZMidnight(utcTime);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(lastNzTimeMidnightInUTC);
+        cal.add(Calendar.HOUR_OF_DAY, 24);
         return cal.getTime();
     }
 }

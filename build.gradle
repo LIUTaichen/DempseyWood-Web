@@ -30,7 +30,7 @@ repositories {
 dependencies {
     // tag::jetty[]
     compile("org.springframework.boot:spring-boot-starter-web") {
-        exclude module: "spring-boot-starter-tomcat"
+        //exclude module: "spring-boot-starter-tomcat"
     }
     compile("org.springframework.boot:spring-boot-devtools")
     //compile("org.springframework.boot:spring-boot-starter-jetty")
@@ -65,6 +65,10 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf'
 // https://mvnrepository.com/artifact/org.webjars/bootstrap
     compile group: 'org.webjars', name: 'bootstrap', version: '3.3.7'
+    compile 'com.google.api-client:google-api-client:1.23.0'
+    compile 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
+    compile 'com.google.apis:google-api-services-sheets:v4-rev491-1.23.0'
+
 
     //compile 'com.google.maps.android:android-maps-utils:0.5+'
 

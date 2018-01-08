@@ -30,7 +30,7 @@ public class ScheduledJobService {
         log.info("The time is now {}", dateFormat.format(new Date()));
     }
 
-    @Scheduled(cron="1 0 0 * * 0,2,3,4,5,6", zone="NZ")
+    @Scheduled(cron="0 0 1 * * *", zone="NZ")
     public void generateDailyLoadCountReport() {
         Date currentTime = new Date();
         Date endTime = DateTimeUtil.getInstance().getLastNZMidnight(currentTime);
@@ -40,19 +40,17 @@ public class ScheduledJobService {
         reportService.sendReportForProject(2,startTime, endTime );
     }
     //TODO;remove method after testing
-    @Scheduled(cron="0 * * 29 9 *", zone="NZ")
+    @Scheduled(cron="0 * * 3 10 *", zone="NZ")
     public void testCron() {
         log.info("The time is now {}", dateFormat.format(new Date()));
 
-        Date endTime = new Date();
-        Calendar startTimeCalendar = Calendar.getInstance();
-        startTimeCalendar.setTime(endTime);
-        startTimeCalendar.add(Calendar.HOUR_OF_DAY, -24);
-        Date startTime = startTimeCalendar.getTime();
+        Date currentTime = new Date();
+        Date endTime = DateTimeUtil.getInstance().getLastNZMidnight(currentTime);
+        Date startTime = DateTimeUtil.getInstance().getTimeOneDayBefore(endTime);
         log.info("testing between  : " + dateFormat.format(startTime) + "  and " + dateFormat.format(endTime));
     }
     //TODO;remove method after testing
-    @Scheduled(cron="0 0,5,10,15,20,25,30,35,40,45,50,55 10,11,12,13,14 29 9 0,2,3,4,5,6", zone="NZ")
+    @Scheduled(cron="0 0,* * 1 10 *", zone="NZ")
     public void testDailyLoadCountReport() {
         Date currentTime = new Date();
         Date endTime = DateTimeUtil.getInstance().getLastNZMidnight(currentTime);
@@ -68,9 +66,9 @@ public class ScheduledJobService {
         for(int i = 0; i < statusList.size(); i++){
             EquipmentStatus status = statusList.get(i);
             if(status.getImei().equals("353117071081280")){
-                status.setEquipment("Dump Truck Ejector - Murph");
+                status.setEquipment("Dump Truck Ejector - Britten");
             }else if(status.getImei().equals("355078080538132")){
-                status.setEquipment("Dump Truck Ejector - Dixon");
+                status.setEquipment("Dump Truck Ejector - Murphy");
             }
         }
         equipmentStatusRepository.save(statusList);

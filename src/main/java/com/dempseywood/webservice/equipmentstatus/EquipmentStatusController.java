@@ -4,10 +4,14 @@ import com.dempseywood.model.EquipmentStatus;
 import com.dempseywood.repository.EquipmentStatusRepository;
 import com.dempseywood.service.ProjectService;
 import com.dempseywood.service.ReportService;
+import com.dempseywood.service.RepostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/status")
@@ -24,6 +28,11 @@ public class EquipmentStatusController {
     @Autowired
     private ProjectService projectService;
 
+
+    @Autowired
+    private RepostService repostService;
+
+
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
@@ -31,7 +40,10 @@ public class EquipmentStatusController {
     	for(EquipmentStatus status: statusList){
     		status.setId(null);
     	}
+        repostService.repost(statusList);
         equipmentStatusRepository.save(statusList);
+
+
         return "Saved";
     }
 
@@ -44,7 +56,6 @@ public class EquipmentStatusController {
         return newStatus;
        // return equipmentStatusRepository.find
     }
-
 
 
 
