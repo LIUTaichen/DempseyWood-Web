@@ -2,6 +2,7 @@ package com.dempseywood.webservice.geofence;
 
 
 import com.dempseywood.model.*;
+import com.dempseywood.model.locationbased.*;
 import com.dempseywood.repository.EquipmentRepository;
 import com.dempseywood.repository.TrackerRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/status")
@@ -58,6 +59,24 @@ public class EquipmentStatusController {
     }
 
 
+    @RequestMapping(method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @Transactional
+    public @ResponseBody String updateEquipmentStatus(@RequestBody Iterable<EquipmentStatus> statusList) {
+        List<EquipmentStatus> statusToBeUpdated = new ArrayList<EquipmentStatus>();
+        for(EquipmentStatus status: statusList){
+            EquipmentStatus oldRecord = equipmentStatusRepository.findTopByImeiAndTimestamp(status.getImei(), status.getTimestamp());
+            if(oldRecord != null){
+                oldRecord.setTask(status.getTask());
+                statusToBeUpdated.add(oldRecord);
+            }
+
+        }
+        if(!statusToBeUpdated.isEmpty()){
+            equipmentStatusRepository.save(statusToBeUpdated);
+        }
+        return "Updated";
+    }
 
 
 

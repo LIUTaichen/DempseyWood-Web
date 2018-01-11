@@ -3,16 +3,16 @@ package com.dempseywood.model;
 import javax.persistence.*;
 
 @Entity
-public class CostSchedule {
+public class RevenueSchedule {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name="project_id")
+    @JoinColumn(name="projectId")
     private Project project;
 
-    private String task;
+    private String description;
     private Double revenue;
 
     public Integer getId() {
@@ -31,12 +31,12 @@ public class CostSchedule {
         this.project = project;
     }
 
-    public String getTask() {
-        return task;
+    public String getDescription() {
+        return description;
     }
 
-    public void setTask(String task) {
-        this.task = task;
+    public void setDescription(String task) {
+        this.description = task;
     }
 
     public Double getRevenue() {

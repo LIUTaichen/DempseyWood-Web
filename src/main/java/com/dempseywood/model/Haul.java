@@ -1,40 +1,110 @@
 package com.dempseywood.model;
 
-import java.time.LocalDateTime;
+import javax.persistence.*;
 import java.util.Date;
 
+@Entity
 public class Haul {
+
+    @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name="equipmentId")
+    private Equipment equipment;
+
+    @ManyToOne
+    @JoinColumn(name="taskId")
+    private Task task;
+
+
+    private String operator;
+
+    private String status;
+
+    private Double loadLatitude;
+    private Double loadLongitude;
+
+    private Double unloadLatitude;
+    private Double unloadLongitude;
+
     private Date loadTime;
     private Date unloadTime;
-    private String equipment;
-    private long duration;
-    private String loadType;
-    private double volume;
-    private double cost;
-    private double revenue;
-    private double profit;
+
+    private String imei;
 
 
-
-    public Haul(){
-
+    public Integer getId() {
+        return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-    public String getEquipment() {
+    public Equipment getEquipment() {
         return equipment;
     }
 
-    public void setEquipment(String equipment) {
+    public void setEquipment(Equipment equipment) {
         this.equipment = equipment;
     }
 
-    public long getDuration() {
-        return duration;
+    public Task getTask() {
+        return task;
     }
 
-    public void setDuration(long duration) {
-        this.duration = duration;
+    public void setTask(Task task) {
+        this.task = task;
+    }
+
+    public String getOperator() {
+        return operator;
+    }
+
+    public void setOperator(String operator) {
+        this.operator = operator;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Double getLoadLatitude() {
+        return loadLatitude;
+    }
+
+    public void setLoadLatitude(Double loadLatitude) {
+        this.loadLatitude = loadLatitude;
+    }
+
+    public Double getLoadLongitude() {
+        return loadLongitude;
+    }
+
+    public void setLoadLongitude(Double loadLongitude) {
+        this.loadLongitude = loadLongitude;
+    }
+
+    public Double getUnloadLatitude() {
+        return unloadLatitude;
+    }
+
+    public void setUnloadLatitude(Double unloadLatitude) {
+        this.unloadLatitude = unloadLatitude;
+    }
+
+    public Double getUnloadLongitude() {
+        return unloadLongitude;
+    }
+
+    public void setUnloadLongitude(Double unloadLongitude) {
+        this.unloadLongitude = unloadLongitude;
     }
 
     public Date getLoadTime() {
@@ -53,43 +123,11 @@ public class Haul {
         this.unloadTime = unloadTime;
     }
 
-    public String getLoadType() {
-        return loadType;
+    public String getImei() {
+        return imei;
     }
 
-    public void setLoadType(String loadType) {
-        this.loadType = loadType;
-    }
-
-    public double getVolume() {
-        return volume;
-    }
-
-    public void setVolume(double volume) {
-        this.volume = volume;
-    }
-
-    public double getCost() {
-        return cost;
-    }
-
-    public void setCost(double cost) {
-        this.cost = cost;
-    }
-
-    public double getRevenue() {
-        return revenue;
-    }
-
-    public void setRevenue(double revenue) {
-        this.revenue = revenue;
-    }
-
-    public double getProfit() {
-        return profit;
-    }
-
-    public void setProfit(double profit) {
-        this.profit = profit;
+    public void setImei(String imei) {
+        this.imei = imei;
     }
 }

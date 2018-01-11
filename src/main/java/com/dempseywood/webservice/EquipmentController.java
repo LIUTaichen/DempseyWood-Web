@@ -1,7 +1,6 @@
 package com.dempseywood.webservice;
 
 import com.dempseywood.model.Equipment;
-import com.dempseywood.model.Geofence;
 import com.dempseywood.repository.EquipmentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 

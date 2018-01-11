@@ -1,10 +1,11 @@
-package com.dempseywood.model;
+package com.dempseywood.model.report;
+
+import com.dempseywood.model.report.HaulSummary;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
-public class BaseLoadCountSummary extends HaulSummary{
+public class BaseLoadCountSummary extends HaulSummary {
 
     private List<HaulSummary> entries;
 

@@ -3,17 +3,21 @@ version '1.0-SNAPSHOT'
 buildscript {
     repositories {
         mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.6.RELEASE")
+        classpath "gradle.plugin.at.comm_unity.gradle.plugins:jpamodelgen-plugin:1.1.4"
     }
 }
+
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'war'
+apply plugin: 'at.comm_unity.gradle.plugins.jpamodelgen'
 
 bootRun {
     addResources = true
@@ -25,9 +29,29 @@ targetCompatibility = 1.8
 ext['hibernate.version'] = '5.2.3.Final'
 repositories {
     mavenCentral()
+
 }
 
+
+jpaModelgen{
+    jpaModelgenSourcesDir = 'src/generated/java'
+}
+
+compileJpaModelgen {
+    includes += ['**/entities/*.java', '**/entity/*.java',  '**/model/*.java']
+}
+
+sourceSets.main.java.srcDir new File(buildDir, 'generated/java')
+idea {
+    module {
+        // Marks the already(!) added srcDir as "generated"
+        generatedSourceDirs += file('build/generated/java')
+    }
+}
+compileJava.options.compilerArgs += ["-proc:none"]
 dependencies {
+
+
     // tag::jetty[]
     compile("org.springframework.boot:spring-boot-starter-web") {
         //exclude module: "spring-boot-starter-tomcat"
@@ -70,6 +94,7 @@ dependencies {
     compile 'com.google.apis:google-api-services-sheets:v4-rev491-1.23.0'
 
 
+
     //compile 'com.google.maps.android:android-maps-utils:0.5+'
 
 
@@ -77,5 +102,12 @@ dependencies {
     testCompile("junit:junit")
     // https://mvnrepository.com/artifact/org.mockito/mockito-core
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.1.0'
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+    // https://mvnrepository.com/artifact/com.h2database/h2
+    testCompile group: 'com.h2database', name: 'h2', version: '1.3.148'
+
+
 
 }
+
+
