@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Date;
 import java.util.List;
 
-public interface HaulRepository extends CrudRepository<Haul, Integer>,JpaSpecificationExecutor {
+public interface HaulRepository extends CrudRepository<Haul, Integer>,JpaSpecificationExecutor<Haul> {
 
 
     //public List<Haul> findByImeiAndLoadTimeAfterAndUnloadTimeBefore(String imei, Date fromDate, Date toDate);
