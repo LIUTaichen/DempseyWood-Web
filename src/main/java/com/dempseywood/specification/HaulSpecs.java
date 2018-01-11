@@ -2,6 +2,7 @@ package com.dempseywood.specification;
 
 import com.dempseywood.model.Haul;
 
+import com.dempseywood.model.Haul_;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -17,21 +18,29 @@ public class HaulSpecs {
         return new Specification<Haul>() {
             public Predicate toPredicate(Root<Haul> root, CriteriaQuery<?> query,
                                          CriteriaBuilder builder) {
-                ///builder.lessThanOrEqualTo(root.get(_Haul), toDate);
-                return builder.lessThanOrEqualTo(root.get(""), toDate);
+                return builder.lessThan(root.get(Haul_.unloadTime), toDate);
 
             }
         };
     }
 
-/*    public static Specification<Haul> isAfter() {
-        return new Specification<Customer>() {
-            public Predicate toPredicate(Root<Customer> root, CriteriaQuery<?> query,
+    public static Specification<Haul> isAfter(Date fromDate) {
+        return new Specification<Haul>() {
+            public Predicate toPredicate(Root<Haul> root, CriteriaQuery<?> query,
                                          CriteriaBuilder builder) {
 
-                LocalDate date = new LocalDate().minusYears(2);
-                return builder.lessThan(root.get(_Customer.createdAt), date);
+                return builder.greaterThan(root.get(Haul_.loadTime), fromDate);
             }
         };
-    }*/
+    }
+
+    public static Specification<Haul> hasImei(String imei) {
+        return new Specification<Haul>() {
+            public Predicate toPredicate(Root<Haul> root, CriteriaQuery<?> query,
+                                         CriteriaBuilder builder) {
+
+                return builder.equal(root.get(Haul_.imei), imei);
+            }
+        };
+    }
 }
