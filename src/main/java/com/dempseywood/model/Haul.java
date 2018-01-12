@@ -34,6 +34,8 @@ public class Haul {
 
     private String imei;
 
+    private String uuid;
+
 
     public Integer getId() {
         return id;
@@ -129,5 +131,13 @@ public class Haul {
 
     public void setImei(String imei) {
         this.imei = imei;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

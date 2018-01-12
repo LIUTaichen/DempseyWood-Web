@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.List;
 
 public interface HaulRepository extends CrudRepository<Haul, Integer>,JpaSpecificationExecutor<Haul> {
+    public Haul findOneByUuid(String uuid);
+
 
 
     //public List<Haul> findByImeiAndLoadTimeAfterAndUnloadTimeBefore(String imei, Date fromDate, Date toDate);

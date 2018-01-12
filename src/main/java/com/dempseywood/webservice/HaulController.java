@@ -14,6 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,6 +72,52 @@ public class HaulController {
             haulRepository.findAll(combinedSpecs).forEach(hauls::add);
             return hauls;
         }
+    }
+
+
+
+
+    @RequestMapping(method = RequestMethod.GET,value="/{haulId}", produces = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    @Transactional
+    public @ResponseBody
+    ResponseEntity<?> getHaul(@PathVariable Integer haulId){
+        Haul existingHaul = haulRepository.findOne(haulId);
+        if(existingHaul ==  null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }else{
+            return new ResponseEntity<>(existingHaul, HttpStatus.OK);
+        }
+    }
+
+
+    @RequestMapping(method = RequestMethod.POST,  produces = "application/json")
+    ResponseEntity<?> add(@RequestBody Haul input) {
+            Haul existingHaul = haulRepository.findOneByUuid(input.getUuid());
+            if(existingHaul != null){
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            }else{
+                input.setId(null);
+                Haul newHaul = haulRepository.save(input);
+                return new ResponseEntity<>(newHaul, HttpStatus.CREATED);
+            }
+    }
+
+
+    @RequestMapping(value="/{haulId}",method = RequestMethod.PUT,  produces = "application/json")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    ResponseEntity<?> update(@RequestBody Haul input, @PathVariable Integer haulId) {
+        Haul existingHaul = haulRepository.findOne(haulId);
+        if(existingHaul ==  null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }else{
+            existingHaul.setUnloadTime(input.getUnloadTime());
+            existingHaul.setUnloadLatitude(input.getUnloadLatitude());
+            existingHaul.setUnloadLongitude(input.getUnloadLongitude());
+            existingHaul = haulRepository.save(existingHaul);
+            return new ResponseEntity<>(existingHaul, HttpStatus.ACCEPTED);
+        }
+
     }
 
 }
