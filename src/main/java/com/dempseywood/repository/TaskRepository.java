@@ -8,4 +8,5 @@ public interface TaskRepository extends CrudRepository<Task, Integer> {
 
     public Iterable<Task> findByProjectId(Integer projectId);
 
+    Task findByName(String name);
 }

@@ -1,12 +1,12 @@
 package com.dempseywood.webservice;
 
 import com.dempseywood.model.Haul;
-import com.dempseywood.model.Project;
-import com.dempseywood.model.Task;
+import com.dempseywood.model.dto.FinishHaulRequest;
+import com.dempseywood.model.dto.StartHaulRequest;
+import com.dempseywood.model.UpdateTaskRequest;
 import com.dempseywood.repository.HaulRepository;
-import com.dempseywood.repository.TaskRepository;
+import com.dempseywood.service.HaulService;
 import com.dempseywood.specification.HaulSpecs;
-import com.dempseywood.util.DateTimeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,17 +16,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static javafx.scene.input.KeyCode.H;
 
 @RestController
 @RequestMapping("/api/hauls")
@@ -36,6 +32,9 @@ public class HaulController {
 
     @Autowired
     private HaulRepository haulRepository;
+
+    @Autowired
+    private HaulService haulService;
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
@@ -92,25 +91,31 @@ public class HaulController {
 
 
     @RequestMapping(method = RequestMethod.POST,  produces = "application/json")
-    ResponseEntity<?> add(@RequestBody Haul input) {
+    ResponseEntity<?> createHaul(@RequestBody StartHaulRequest input, BindingResult results) {
+
             Haul existingHaul = haulRepository.findOneByUuid(input.getUuid());
             if(existingHaul != null){
                 return ResponseEntity.status(HttpStatus.CONFLICT).build();
-            }else{
-                input.setId(null);
-                Haul newHaul = haulRepository.save(input);
-                return new ResponseEntity<>(newHaul, HttpStatus.CREATED);
             }
+
+            boolean isValid = haulService.isValidHaul(input);
+            if(!isValid) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+
+            Haul newHaul = haulService.buildNewHaulFromInput(input);
+            return new ResponseEntity<>(newHaul, HttpStatus.CREATED);
     }
 
 
-    @RequestMapping(value="/{haulId}",method = RequestMethod.PUT,  produces = "application/json")
+    @RequestMapping(value="/{haulId}", method = RequestMethod.PUT,  produces = "application/json")
     @ResponseStatus(HttpStatus.ACCEPTED)
     ResponseEntity<?> update(@RequestBody Haul input, @PathVariable Integer haulId) {
         Haul existingHaul = haulRepository.findOne(haulId);
         if(existingHaul ==  null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }else{
+
             existingHaul.setUnloadTime(input.getUnloadTime());
             existingHaul.setUnloadLatitude(input.getUnloadLatitude());
             existingHaul.setUnloadLongitude(input.getUnloadLongitude());
@@ -119,5 +124,50 @@ public class HaulController {
         }
 
     }
+
+
+    @RequestMapping(value="/{haulId}/unload", method = RequestMethod.POST,  produces = "application/json")
+    ResponseEntity<?> unload(@RequestBody @Valid FinishHaulRequest input, @PathVariable Integer haulId) {
+
+        if(input.getUnloadTime() == null
+                || input.getUnloadLatitude() == null
+                || input.getUnloadLongitude() == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+        }
+        Haul existingHaul = haulRepository.findOne(haulId);
+        if(existingHaul ==  null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+
+
+        if(existingHaul != null){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
+        Haul newHaul = haulService.updateHaulForUnload(haulId, input);
+        return new ResponseEntity<>(newHaul, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value="/{haulId}/updateTask", method = RequestMethod.POST,  produces = "application/json")
+    ResponseEntity<?> updateTask(@RequestBody @Valid UpdateTaskRequest input, @PathVariable Integer haulId) {
+
+
+        Haul existingHaul = haulRepository.findOne(haulId);
+        if(existingHaul ==  null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+
+
+        if(existingHaul != null){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
+        Haul newHaul = haulService.updateTask(haulId, input);
+        return new ResponseEntity<>(newHaul, HttpStatus.CREATED);
+    }
+
 
 }

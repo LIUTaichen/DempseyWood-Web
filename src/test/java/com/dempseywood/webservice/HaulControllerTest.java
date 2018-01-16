@@ -3,6 +3,7 @@ package com.dempseywood.webservice;
 import com.dempseywood.Application;
 import com.dempseywood.model.Haul;
 import com.dempseywood.repository.HaulRepository;
+import com.dempseywood.service.HaulService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,6 +63,9 @@ public class HaulControllerTest {
     @MockBean
     private HaulRepository haulRespository;
 
+    @MockBean
+    private HaulService haulService ;
+
     @Before
     public void setup() throws Exception {
         Haul haul = new Haul();
@@ -102,7 +106,112 @@ public class HaulControllerTest {
     }
 
     @Test
-    public void add() throws Exception {
+    public void startHaulValid() throws Exception {
+        Haul haul = new Haul();
+        haul.setUuid("test uuid");
+        given(this.haulRespository.findOneByUuid("test uuid"))
+                .willReturn(null);
+        given(this.haulService.isValidHaul(any()))
+                .willReturn(true);
+        String json = "{\n" +
+
+                "\"equipment\": test,\n" +
+                "\"task\": test,\n" +
+                "\"operator\": test,\n" +
+                "\"loadLatitude\": 1,\n" +
+                "\"loadLongitude\": 1,\n" +
+                //"\"unloadLatitude\": null,\n" +
+                //"\"unloadLongitude\": null,\n" +
+                "\"loadTime\": 2012-04-23T18:25:43.511Z,\n" +
+                //"\"unloadTime\": null,\n" +
+                "\"imei\": 1111,\n" +
+                "\"uuid\": \"test uuid\"\n" +
+                "}";
+        mockMvc.perform(post("/api/hauls/").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isCreated());
+
+    }
+    @Test
+    public void startHaulExistsError() throws Exception {
+        Haul haul = new Haul();
+        haul.setUuid("test uuid");
+        given(this.haulRespository.findOneByUuid("test uuid"))
+                .willReturn(haul);
+
+        String json = "{\n" +
+
+                "\"equipment\": test,\n" +
+                "\"task\": test,\n" +
+                "\"operator\": test,\n" +
+                "\"loadLatitude\": 1,\n" +
+                "\"loadLongitude\": 1,\n" +
+                //"\"unloadLatitude\": null,\n" +
+                //"\"unloadLongitude\": null,\n" +
+                "\"loadTime\": 2012-04-23T18:25:43.511Z,\n" +
+                //"\"unloadTime\": null,\n" +
+                "\"imei\": 1111,\n" +
+                "\"uuid\": \"test uuid\"\n" +
+                "}";
+        mockMvc.perform(post("/api/hauls/").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    public void startHaulInvalidParametersError() throws Exception {
+        Haul haul = new Haul();
+        haul.setUuid("test uuid");
+        given(this.haulRespository.findOneByUuid("test uuid"))
+                .willReturn(null);
+        String json = "{\n" +
+
+                "\"equipment\": test,\n" +
+                "\"task\": test,\n" +
+                "\"operator\": test,\n" +
+                "\"loadLatitude\": 1,\n" +
+                "\"loadLongitude\": 1,\n" +
+                //"\"unloadLatitude\": null,\n" +
+                //"\"unloadLongitude\": null,\n" +
+                "\"loadTime\": 2012-04-23T18:25:43.511Z,\n" +
+                //"\"unloadTime\": null,\n" +
+                "\"imei\": 1111,\n" +
+                "\"uuid\": \"test uuid\"\n" +
+                "}";
+        mockMvc.perform(post("/api/hauls/").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void update() throws Exception {
+
+        Haul haul = new Haul();
+        haul.setUuid("test uuid");
+        given(this.haulRespository.findOneByUuid("test uuid"))
+                .willReturn(null);
+        String json = "{\n" +
+                "\"id\": 1,\n" +
+                "\"equipment\": testEquipment,\n" +
+                "\"task\": testTask,\n" +
+                "\"operator\": testOperator,\n" +
+                "\"loadLatitude\": 1,\n" +
+                "\"loadLongitude\": 1,\n" +
+                "\"unloadLatitude\": null,\n" +
+                "\"unloadLongitude\": null,\n" +
+                "\"loadTime\": null,\n" +
+                "\"unloadTime\": null,\n" +
+                "\"imei\": null,\n" +
+                "\"uuid\": null\n" +
+                "}";
+        mockMvc.perform(put("/api/hauls/100").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isAccepted());
+
+        given(this.haulRespository.findOneByUuid("test uuid"))
+                .willReturn(haul);
+        mockMvc.perform(put("/api/hauls/99999").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void validateTask() throws Exception {
         Haul haul = new Haul();
         haul.setUuid("test uuid");
         given(this.haulRespository.findOneByUuid("test uuid"))
@@ -130,37 +239,6 @@ public class HaulControllerTest {
         mockMvc.perform(post("/api/hauls/").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isConflict());
 
-    }
-
-    @Test
-    public void update() throws Exception {
-
-        Haul haul = new Haul();
-        haul.setUuid("test uuid");
-        given(this.haulRespository.findOneByUuid("test uuid"))
-                .willReturn(null);
-        String json = "{\n" +
-                "\"id\": 1,\n" +
-                "\"equipment\": null,\n" +
-                "\"task\": null,\n" +
-                "\"operator\": null,\n" +
-                "\"status\": null,\n" +
-                "\"loadLatitude\": null,\n" +
-                "\"loadLongitude\": null,\n" +
-                "\"unloadLatitude\": null,\n" +
-                "\"unloadLongitude\": null,\n" +
-                "\"loadTime\": null,\n" +
-                "\"unloadTime\": null,\n" +
-                "\"imei\": null,\n" +
-                "\"uuid\": null\n" +
-                "}";
-        mockMvc.perform(put("/api/hauls/100").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isAccepted());
-
-        given(this.haulRespository.findOneByUuid("test uuid"))
-                .willReturn(haul);
-        mockMvc.perform(put("/api/hauls/99999").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isNotFound());
     }
 
 }
