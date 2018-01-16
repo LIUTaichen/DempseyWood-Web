@@ -1,9 +1,12 @@
 package com.dempseywood.model;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 @Entity
 public class UpdateTaskRequest {
@@ -11,12 +14,16 @@ public class UpdateTaskRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-
+    @NotNull
+    @NotEmpty
     private String imei;
-
+    @NotNull
+    @NotEmpty
     private String task;
-
-    private String HaulUuid;
+    @NotNull
+    @NotEmpty
+    private String haulUuid;
+    @NotNull
     private Date timestamp;
 
     public Date getTimestamp() {
@@ -56,11 +63,11 @@ public class UpdateTaskRequest {
 
 
     public String getHaulUuid() {
-        return HaulUuid;
+        return haulUuid;
     }
 
     public void setHaulUuid(String haulUuid) {
-        HaulUuid = haulUuid;
+        this.haulUuid = haulUuid;
     }
 
     @Override
@@ -69,7 +76,7 @@ public class UpdateTaskRequest {
                 "id=" + id +
                 ", imei='" + imei + '\'' +
                 ", task='" + task + '\'' +
-                ", HaulUuid='" + HaulUuid + '\'' +
+                ", HaulUuid='" + haulUuid + '\'' +
                 ", timestamp=" + timestamp +
                 '}';
     }

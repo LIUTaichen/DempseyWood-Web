@@ -53,6 +53,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 public class HaulControllerTest {
 
+
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(),
             Charset.forName("utf8"));
@@ -115,16 +116,16 @@ public class HaulControllerTest {
                 .willReturn(true);
         String json = "{\n" +
 
-                "\"equipment\": test,\n" +
-                "\"task\": test,\n" +
-                "\"operator\": test,\n" +
+                "\"equipment\": \"test1\",\n" +
+                "\"task\": \"test2\",\n" +
+                "\"operator\": \"test3\",\n" +
                 "\"loadLatitude\": 1,\n" +
                 "\"loadLongitude\": 1,\n" +
                 //"\"unloadLatitude\": null,\n" +
                 //"\"unloadLongitude\": null,\n" +
-                "\"loadTime\": 2012-04-23T18:25:43.511Z,\n" +
+                "\"loadTime\": \"2012-04-23T18:25:43.511Z\",\n" +
                 //"\"unloadTime\": null,\n" +
-                "\"imei\": 1111,\n" +
+                "\"imei\": \"1111\",\n" +
                 "\"uuid\": \"test uuid\"\n" +
                 "}";
         mockMvc.perform(post("/api/hauls/").contentType(MediaType.APPLICATION_JSON).content(json))
@@ -140,16 +141,16 @@ public class HaulControllerTest {
 
         String json = "{\n" +
 
-                "\"equipment\": test,\n" +
-                "\"task\": test,\n" +
-                "\"operator\": test,\n" +
+                "\"equipment\": \"test1\",\n" +
+                "\"task\": \"test2\",\n" +
+                "\"operator\": \"test3\",\n" +
                 "\"loadLatitude\": 1,\n" +
                 "\"loadLongitude\": 1,\n" +
                 //"\"unloadLatitude\": null,\n" +
                 //"\"unloadLongitude\": null,\n" +
-                "\"loadTime\": 2012-04-23T18:25:43.511Z,\n" +
+                "\"loadTime\": \"2012-04-23T18:25:43.511Z\",\n" +
                 //"\"unloadTime\": null,\n" +
-                "\"imei\": 1111,\n" +
+                "\"imei\": \"1111\",\n" +
                 "\"uuid\": \"test uuid\"\n" +
                 "}";
         mockMvc.perform(post("/api/hauls/").contentType(MediaType.APPLICATION_JSON).content(json))
@@ -164,16 +165,16 @@ public class HaulControllerTest {
                 .willReturn(null);
         String json = "{\n" +
 
-                "\"equipment\": test,\n" +
-                "\"task\": test,\n" +
-                "\"operator\": test,\n" +
+                "\"equipment\": \"test1\",\n" +
+                "\"task\": \"test2\",\n" +
+                "\"operator\": \"test3\",\n" +
                 "\"loadLatitude\": 1,\n" +
                 "\"loadLongitude\": 1,\n" +
                 //"\"unloadLatitude\": null,\n" +
                 //"\"unloadLongitude\": null,\n" +
-                "\"loadTime\": 2012-04-23T18:25:43.511Z,\n" +
+                "\"loadTime\": \"2012-04-23T18:25:43.511Z\",\n" +
                 //"\"unloadTime\": null,\n" +
-                "\"imei\": 1111,\n" +
+                "\"imei\": \"1111\",\n" +
                 "\"uuid\": \"test uuid\"\n" +
                 "}";
         mockMvc.perform(post("/api/hauls/").contentType(MediaType.APPLICATION_JSON).content(json))
@@ -181,64 +182,133 @@ public class HaulControllerTest {
     }
 
     @Test
-    public void update() throws Exception {
-
+    public void unloadValid() throws Exception {
         Haul haul = new Haul();
         haul.setUuid("test uuid");
-        given(this.haulRespository.findOneByUuid("test uuid"))
+        given(haulRespository.findOne(100))
+                .willReturn(haul);
+        String json = "{\n" +
+
+
+                "\"unloadLatitude\": 1,\n" +
+                "\"unloadLongitude\": 1,\n" +
+                "\"unloadTime\": \"2012-04-23T18:25:43.511Z\"\n" +
+                "}";
+        mockMvc.perform(post("/api/hauls/100/unload").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isAccepted());
+    }
+
+
+    @Test
+    public void unloadHaulNotFound() throws Exception {
+        Haul haul = new Haul();
+        haul.setUuid("test uuid");
+        given(this.haulRespository.findOne(100))
                 .willReturn(null);
         String json = "{\n" +
-                "\"id\": 1,\n" +
-                "\"equipment\": testEquipment,\n" +
-                "\"task\": testTask,\n" +
-                "\"operator\": testOperator,\n" +
-                "\"loadLatitude\": 1,\n" +
-                "\"loadLongitude\": 1,\n" +
-                "\"unloadLatitude\": null,\n" +
-                "\"unloadLongitude\": null,\n" +
-                "\"loadTime\": null,\n" +
-                "\"unloadTime\": null,\n" +
-                "\"imei\": null,\n" +
-                "\"uuid\": null\n" +
-                "}";
-        mockMvc.perform(put("/api/hauls/100").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isAccepted());
 
-        given(this.haulRespository.findOneByUuid("test uuid"))
-                .willReturn(haul);
-        mockMvc.perform(put("/api/hauls/99999").contentType(MediaType.APPLICATION_JSON).content(json))
+
+                "\"unloadLatitude\": 1,\n" +
+                "\"unloadLongitude\": 1,\n" +
+                "\"unloadTime\": \"2012-04-23T18:25:43.511Z\"\n" +
+
+                "}";
+        mockMvc.perform(post("/api/hauls/100/unload").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isNotFound());
     }
 
+
     @Test
-    public void validateTask() throws Exception {
+    public void unloadBadRequest() throws Exception {
         Haul haul = new Haul();
         haul.setUuid("test uuid");
         given(this.haulRespository.findOneByUuid("test uuid"))
                 .willReturn(null);
         String json = "{\n" +
-                "\"id\": 1,\n" +
-                "\"equipment\": null,\n" +
-                "\"task\": null,\n" +
-                "\"operator\": null,\n" +
-                "\"status\": null,\n" +
-                "\"loadLatitude\": null,\n" +
-                "\"loadLongitude\": null,\n" +
-                "\"unloadLatitude\": null,\n" +
-                "\"unloadLongitude\": null,\n" +
-                "\"loadTime\": null,\n" +
-                "\"unloadTime\": null,\n" +
-                "\"imei\": null,\n" +
+
+                "\"equipment\": \"test1\",\n" +
+                "\"task\": \"test2\",\n" +
+                "\"operator\": \"test3\",\n" +
+                "\"loadLatitude\": 1,\n" +
+                "\"loadLongitude\": 1,\n" +
+                //"\"unloadLatitude\": null,\n" +
+                //"\"unloadLongitude\": null,\n" +
+                "\"loadTime\": \"2012-04-23T18:25:43.511Z\",\n" +
+                //"\"unloadTime\": null,\n" +
+                "\"imei\": \"1111\",\n" +
                 "\"uuid\": \"test uuid\"\n" +
                 "}";
-        mockMvc.perform(post("/api/hauls/").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isCreated());
+        mockMvc.perform(post("/api/hauls/100/unload").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isBadRequest());
+    }
 
-        given(this.haulRespository.findOneByUuid("test uuid"))
+    @Test
+    public void updateTaskValid() throws Exception {
+        Haul haul = new Haul();
+        haul.setUuid("test uuid");
+        given(this.haulRespository.findOne(100))
                 .willReturn(haul);
-        mockMvc.perform(post("/api/hauls/").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isConflict());
+
+        String json = "{\n" +
+
+                "\"id\": \"1\",\n" +
+                "\"task\": \"test2\",\n" +
+                "\"operator\": \"test3\",\n" +
+                "\"haulUuid\": 1,\n" +
+
+                "\"timestamp\": \"2012-04-23T18:25:43.511Z\",\n" +
+                "\"imei\": \"1111\",\n" +
+                "\"haulUuid\": \"test uuid\"\n" +
+                "}";
+        mockMvc.perform(post("/api/hauls/100/updateTask").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isCreated());
 
     }
 
+    @Test
+    public void updateTaskBadRequest() throws Exception {
+        Haul haul = new Haul();
+        haul.setUuid("test uuid");
+        given(this.haulRespository.findOne(100))
+                .willReturn(haul);
+
+        String json = "{\n" +
+
+                "\"id\": \"1\",\n" +
+                "\"task\": null,\n" +
+                "\"operator\": \"test3\",\n" +
+                "\"haulUuid\": 1,\n" +
+
+                "\"timestamp\": \"2012-04-23T18:25:43.511Z\",\n" +
+                //"\"unloadTime\": null,\n" +
+                "\"imei\": \"1111\",\n" +
+                "\"haulUuid\": \"test uuid\"\n" +
+                "}";
+        mockMvc.perform(post("/api/hauls/100/updateTask").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    public void updateTaskNotFound() throws Exception {
+        Haul haul = new Haul();
+        haul.setUuid("test uuid");
+        given(this.haulRespository.findOne(100))
+                .willReturn(null);
+
+        String json = "{\n" +
+
+                "\"id\": \"1\",\n" +
+                "\"task\": \"test3\",\n" +
+                "\"operator\": \"test3\",\n" +
+                "\"haulUuid\": 1,\n" +
+
+                "\"timestamp\": \"2012-04-23T18:25:43.511Z\",\n" +
+                //"\"unloadTime\": null,\n" +
+                "\"imei\": \"1111\",\n" +
+                "\"haulUuid\": \"test uuid\"\n" +
+                "}";
+        mockMvc.perform(post("/api/hauls/100/updateTask").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isNotFound());
+    }
 }

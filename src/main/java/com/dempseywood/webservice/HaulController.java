@@ -107,7 +107,12 @@ public class HaulController {
             return new ResponseEntity<>(newHaul, HttpStatus.CREATED);
     }
 
-
+    /**
+     * Not being used
+     * @param input
+     * @param haulId
+     * @return
+     */
     @RequestMapping(value="/{haulId}", method = RequestMethod.PUT,  produces = "application/json")
     @ResponseStatus(HttpStatus.ACCEPTED)
     ResponseEntity<?> update(@RequestBody Haul input, @PathVariable Integer haulId) {
@@ -129,25 +134,13 @@ public class HaulController {
     @RequestMapping(value="/{haulId}/unload", method = RequestMethod.POST,  produces = "application/json")
     ResponseEntity<?> unload(@RequestBody @Valid FinishHaulRequest input, @PathVariable Integer haulId) {
 
-        if(input.getUnloadTime() == null
-                || input.getUnloadLatitude() == null
-                || input.getUnloadLongitude() == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-
-        }
         Haul existingHaul = haulRepository.findOne(haulId);
         if(existingHaul ==  null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-
-
-        if(existingHaul != null){
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-
         Haul newHaul = haulService.updateHaulForUnload(haulId, input);
-        return new ResponseEntity<>(newHaul, HttpStatus.CREATED);
+        return new ResponseEntity<>(newHaul, HttpStatus.ACCEPTED);
     }
 
     @RequestMapping(value="/{haulId}/updateTask", method = RequestMethod.POST,  produces = "application/json")
@@ -157,12 +150,6 @@ public class HaulController {
         Haul existingHaul = haulRepository.findOne(haulId);
         if(existingHaul ==  null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
-
-
-        if(existingHaul != null){
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
         Haul newHaul = haulService.updateTask(haulId, input);
