@@ -1,7 +1,7 @@
 package com.dempseywood.util;
 
 
-import com.dempseywood.model.LatLng;
+import com.dempseywood.model.locationbased.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;

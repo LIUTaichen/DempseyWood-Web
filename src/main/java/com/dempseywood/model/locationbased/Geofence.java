@@ -1,4 +1,6 @@
-package com.dempseywood.model;
+package com.dempseywood.model.locationbased;
+
+import com.dempseywood.model.locationbased.LatLng;
 
 import javax.persistence.*;
 import java.util.List;

@@ -68,7 +68,7 @@ public class EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
             SimpleDateFormat df = new SimpleDateFormat("EEE dd/MM/yyyy");
             df.setTimeZone(TimeZone.getTimeZone(clientTimeZone));
-            helper.setSubject("Load count for "+ projectName + " " + df.format(forDate));
+            helper.setSubject("Haul count for "+ projectName + " " + df.format(forDate));
             helper.setTo(toEmailAddress);
             helper.setText(
                     messageString, true);

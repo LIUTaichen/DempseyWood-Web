@@ -1,6 +1,6 @@
 package com.dempseywood.repository;
 
-import com.dempseywood.model.Geofence;
+import com.dempseywood.model.locationbased.Geofence;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

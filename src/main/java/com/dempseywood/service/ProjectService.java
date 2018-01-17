@@ -1,9 +1,8 @@
 package com.dempseywood.service;
 
-import com.dempseywood.model.CostSchedule;
+import com.dempseywood.model.RevenueSchedule;
 import com.dempseywood.model.Equipment;
-import com.dempseywood.repository.CostScheduleRepository;
-import org.aspectj.weaver.NameMangler;
+import com.dempseywood.repository.RevenueScheduleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,7 @@ public class ProjectService {
 
 
 	@Autowired
-	private CostScheduleRepository costScheduleRepository;
+	private RevenueScheduleRepository costScheduleRepository;
 	
 	@Transactional
 	public Integer getProjectIdFromUserEmail(String email){
@@ -70,10 +69,10 @@ public class ProjectService {
 	}
 
 	public Map<String, Double> getTaskRevenueMapForProject(Integer projectId) {
-		List<CostSchedule> costScheduleList = costScheduleRepository.findByProjectId(projectId);
+		List<RevenueSchedule> revenueScheduleList = costScheduleRepository.findByProjectId(projectId);
 		Map<String, Double> revenueScheule = new HashMap<String, Double>();
-		for (CostSchedule cost : costScheduleList) {
-			revenueScheule.put(cost.getTask(), cost.getRevenue());
+		for (RevenueSchedule revenue : revenueScheduleList) {
+			revenueScheule.put(revenue.getDescription(), revenue.getRevenue());
 		}
 		return revenueScheule;
 	}

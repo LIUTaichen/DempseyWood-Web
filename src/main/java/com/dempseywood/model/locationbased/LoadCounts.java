@@ -1,4 +1,7 @@
-package com.dempseywood.model;
+package com.dempseywood.model.locationbased;
+
+import com.dempseywood.model.report.Count;
+import com.dempseywood.model.Equipment;
 
 import java.util.ArrayList;
 import java.util.List;

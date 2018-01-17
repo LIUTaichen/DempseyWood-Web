@@ -1,4 +1,4 @@
-package com.dempseywood.model;
+package com.dempseywood.model.locationbased;
 
 import javax.persistence.*;
 import java.util.ArrayList;

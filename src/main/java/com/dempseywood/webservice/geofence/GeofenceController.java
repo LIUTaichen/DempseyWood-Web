@@ -1,9 +1,9 @@
 package com.dempseywood.webservice.geofence;
 
-import com.dempseywood.model.Geofence;
-import com.dempseywood.model.GeofencesTO;
-import com.dempseywood.model.Reading;
-import com.dempseywood.model.Track;
+import com.dempseywood.model.locationbased.Geofence;
+import com.dempseywood.model.locationbased.GeofencesTO;
+import com.dempseywood.model.locationbased.Reading;
+import com.dempseywood.model.locationbased.Track;
 import com.dempseywood.repository.GeofenceRepository;
 import com.dempseywood.repository.LatLngRepository;
 import com.dempseywood.repository.ReadingRepository;

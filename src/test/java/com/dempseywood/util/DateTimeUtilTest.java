@@ -40,4 +40,22 @@ public class DateTimeUtilTest {
         System.out.println(DateTimeUtil.getInstance().convertToClientLocalDate(date));
     }
 
+    @Test
+    public void test(){
+        Date date = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        System.out.println(cal.getTime());
+
+        cal.setTimeZone(TimeZone.getTimeZone("NZ"));
+        System.out.println(cal.getTime());
+        System.out.println(cal.get(Calendar.HOUR_OF_DAY));
+        System.out.println(cal.getTime());
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        System.out.println(cal.getTime());
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+    }
+
 }

@@ -2,7 +2,7 @@ package com.dempseywood.greetings;
 
 import com.dempseywood.navixy.AuthResult;
 import com.dempseywood.navixy.reading.Response;
-import com.dempseywood.model.Reading;
+import com.dempseywood.model.locationbased.Reading;
 import com.dempseywood.repository.ReadingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;

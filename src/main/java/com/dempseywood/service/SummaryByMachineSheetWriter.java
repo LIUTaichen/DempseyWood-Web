@@ -1,6 +1,6 @@
 package com.dempseywood.service;
 
-import com.dempseywood.model.HaulSummary;
+import com.dempseywood.model.report.HaulSummary;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
@@ -41,7 +41,7 @@ public class SummaryByMachineSheetWriter extends SheetWriter {
         int currentColumn = 0;
         Row header = sheet.createRow(currentRow++);
 
-        String[] columnNames = {"Machine", "Load Type","Load Count","Volume", "Time" ,"Cost", "Revenue" ,"Profit" };
+        String[] columnNames = {"Machine", "Haul Type","Haul Count","Volume", "Time" ,"Cost", "Revenue" ,"Profit" };
         for(int i = 0; i<columnNames.length; i ++){
             header.createCell(currentColumn).setCellValue(columnNames[i]);
             header.getCell(currentColumn).setCellStyle(headerStyle);

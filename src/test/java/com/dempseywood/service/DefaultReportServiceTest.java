@@ -2,7 +2,7 @@ package com.dempseywood.service;
 
 import com.dempseywood.model.Equipment;
 import com.dempseywood.model.EquipmentStatus;
-import com.dempseywood.model.Haul;
+import com.dempseywood.model.report.HaulReportEntry;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -114,7 +114,7 @@ public class DefaultReportServiceTest {
         //Moxy 6 is an equipment without cost information
         statusList.add(new EquipmentStatus("Moxy 6", "Top soil", "Loaded", new Date()));
         statusList.add(new EquipmentStatus("Moxy 6", "Top soil", "Unloaded", new Date()));
-        List<Haul> resultList = service.convertEventsToHauls(statusList, revenueSchedule,equipmentMap );
+        List<HaulReportEntry> resultList = service.convertEventsToHauls(statusList, revenueSchedule,equipmentMap );
         assertEquals(1,resultList.size());
         assertEquals(0, resultList.get(0).getCost(), 0d);
 
@@ -127,7 +127,7 @@ public class DefaultReportServiceTest {
         //Moxy 7 is an equipment without capacity information
         statusList.add(new EquipmentStatus("Moxy 7", "Top soil", "Loaded", new Date()));
         statusList.add(new EquipmentStatus("Moxy 7", "Top soil", "Unloaded", new Date()));
-        List<Haul> resultList = service.convertEventsToHauls(statusList, revenueSchedule,equipmentMap );
+        List<HaulReportEntry> resultList = service.convertEventsToHauls(statusList, revenueSchedule,equipmentMap );
         assertEquals(1,resultList.size());
         assertEquals(0, resultList.get(0).getVolume(), 0d);
 

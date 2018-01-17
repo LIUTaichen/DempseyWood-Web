@@ -2,21 +2,20 @@ package com.dempseywood.service;
 
 import com.dempseywood.model.Equipment;
 import com.dempseywood.model.EquipmentStatus;
-import com.dempseywood.model.Haul;
-import com.dempseywood.model.HaulSummary;
+import com.dempseywood.model.report.HaulReportEntry;
+import com.dempseywood.model.report.HaulSummary;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.thymeleaf.context.Context;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 public interface ReportService {
-    Workbook writeReportForProject(List<EquipmentStatus> statusList, List<Haul> haulList, List<HaulSummary> summaryList);
+    Workbook writeReportForProject(List<EquipmentStatus> statusList, List<HaulReportEntry> haulReportEntryList, List<HaulSummary> summaryList);
 
-    List<HaulSummary> getSummaryFromHauls(List<Haul> haulList);
+    List<HaulSummary> getSummaryFromHauls(List<HaulReportEntry> haulReportEntryList);
 
-    List<Haul> convertEventsToHauls(List<EquipmentStatus> statusList, Map<String, Double> revenueScheule, Map<String, Equipment> equipmentMap);
+    List<HaulReportEntry> convertEventsToHauls(List<EquipmentStatus> statusList, Map<String, Double> revenueScheule, Map<String, Equipment> equipmentMap);
 
     List<HaulSummary> getSummaryList(Integer projectId);
 

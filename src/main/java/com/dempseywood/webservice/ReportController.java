@@ -1,12 +1,13 @@
 package com.dempseywood.webservice;
 
-import com.dempseywood.email.EmailService;
 import com.dempseywood.model.*;
+import com.dempseywood.model.report.HaulSummary;
 import com.dempseywood.repository.EquipmentStatusRepository;
 import com.dempseywood.service.ProjectService;
 import com.dempseywood.service.ReportService;
 import com.dempseywood.util.DateTimeUtil;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,6 @@ import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 public class ReportController {
@@ -38,6 +38,8 @@ public class ReportController {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    private Logger log = LoggerFactory.getLogger(ReportController.class);
 
 
     @RequestMapping(path = "/api/status/report", method = RequestMethod.GET)
@@ -102,7 +104,11 @@ public class ReportController {
         }
         Project project = projectService.getProjectFromUserEmail(email);
         Integer projectId = project.getId();
-        reportService.sendReportForProject(projectId, DateTimeUtil.getInstance().getTimeOfBeginningOfToday(fromDate), DateTimeUtil.getInstance().getTimeOfEndOfToday(toDate));
+        Date startTime = DateTimeUtil.getInstance().getLastNZMidnight(fromDate);
+        Date endTime = DateTimeUtil.getInstance().getNextNZMidNight(toDate);
+
+        log.info("generating report for time between " + startTime + " and " + endTime );
+        reportService.sendReportForProject(projectId, startTime, endTime);
         return "email sent";
     }
 

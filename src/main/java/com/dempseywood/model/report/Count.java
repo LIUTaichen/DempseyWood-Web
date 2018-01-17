@@ -1,4 +1,4 @@
-package com.dempseywood.model;
+package com.dempseywood.model.report;
 
 public class Count {
     private String material;

@@ -1,28 +1,13 @@
 package com.dempseywood.webservice.equipmentstatus;
 
-import com.dempseywood.model.Equipment;
-import com.dempseywood.model.EquipmentStatus;
-import com.dempseywood.model.Haul;
-import com.dempseywood.repository.EquipmentRepository;
-import com.dempseywood.repository.EquipmentStatusRepository;
-import static  com.dempseywood.webservice.geofence.TruckStatus.*;
-
-import com.dempseywood.webservice.geofence.TruckStatus;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.view.document.AbstractXlsxView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 
 @Component

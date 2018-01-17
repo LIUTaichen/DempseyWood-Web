@@ -2,6 +2,9 @@ package com.dempseywood.service;
 
 import com.dempseywood.email.EmailService;
 import com.dempseywood.model.*;
+import com.dempseywood.model.report.BaseLoadCountSummary;
+import com.dempseywood.model.report.HaulReportEntry;
+import com.dempseywood.model.report.HaulSummary;
 import com.dempseywood.repository.EquipmentStatusRepository;
 import com.dempseywood.repository.ProjectRepository;
 import com.dempseywood.util.DateTimeUtil;
@@ -43,45 +46,45 @@ public class DefaultReportService implements ReportService {
 
 
     @Override
-    public Workbook writeReportForProject(List<EquipmentStatus> statusList, List<Haul> haulList, List<HaulSummary> summaryList) {
+    public Workbook writeReportForProject(List<EquipmentStatus> statusList, List<HaulReportEntry> haulReportEntryList, List<HaulSummary> summaryList) {
 
         Workbook report = new SXSSFWorkbook();
 
         new EventsSheetWriter("Full Details").writeSheet(report, statusList);
-        new HaulsSheetWriter("Hauls").writeHauls(report, haulList);
+        new HaulsSheetWriter("Hauls").writeHauls(report, haulReportEntryList);
         new SummaryByMachineSheetWriter("Summary By Machine").writeSheet(report, summaryList);
-        new SummaryByLoadTypeSheetWriter("Summary By Load Type").writeSheet(report, summaryList);
+        new SummaryByLoadTypeSheetWriter("Summary By Haul Type").writeSheet(report, summaryList);
         int index = 0;
         report.setSheetOrder("Summary By Machine", index++);
-        report.setSheetOrder("Summary By Load Type", index++);
+        report.setSheetOrder("Summary By Haul Type", index++);
         report.setSheetOrder("Hauls", index++);
         report.setSheetOrder("Full Details", index++);
         return report;
     }
 
     @Override
-    public List<HaulSummary> getSummaryFromHauls(List<Haul> haulList) {
+    public List<HaulSummary> getSummaryFromHauls(List<HaulReportEntry> haulReportEntryList) {
         Map<String, Map<String, HaulSummary>> combined = new HashMap<String, Map<String, HaulSummary>>();
-        for (Haul haul : haulList) {
-            Map<String, HaulSummary> byLoadTypeMap = combined.get(haul.getEquipment());
+        for (HaulReportEntry haulReportEntry : haulReportEntryList) {
+            Map<String, HaulSummary> byLoadTypeMap = combined.get(haulReportEntry.getEquipment());
             if (byLoadTypeMap == null) {
                 byLoadTypeMap = new HashMap<String, HaulSummary>();
-                combined.put(haul.getEquipment(), byLoadTypeMap);
+                combined.put(haulReportEntry.getEquipment(), byLoadTypeMap);
             }
-            HaulSummary entry = byLoadTypeMap.get(haul.getLoadType());
+            HaulSummary entry = byLoadTypeMap.get(haulReportEntry.getLoadType());
             if (entry == null) {
                 entry = new HaulSummary();
-                byLoadTypeMap.put(haul.getLoadType(), entry);
-                entry.setEquipment(haul.getEquipment());
-                entry.setLoadType(haul.getLoadType());
+                byLoadTypeMap.put(haulReportEntry.getLoadType(), entry);
+                entry.setEquipment(haulReportEntry.getEquipment());
+                entry.setLoadType(haulReportEntry.getLoadType());
                 entry.setLoadCount(0);
             }
             entry.setLoadCount(entry.getLoadCount() + 1);
-            entry.setVolume(entry.getVolume() + haul.getVolume());
-            entry.setDuration(entry.getDuration() + haul.getDuration());
-            entry.setCost(entry.getCost() + haul.getCost());
-            entry.setRevenue(entry.getRevenue() + haul.getRevenue());
-            entry.setProfit(entry.getProfit() + haul.getProfit());
+            entry.setVolume(entry.getVolume() + haulReportEntry.getVolume());
+            entry.setDuration(entry.getDuration() + haulReportEntry.getDuration());
+            entry.setCost(entry.getCost() + haulReportEntry.getCost());
+            entry.setRevenue(entry.getRevenue() + haulReportEntry.getRevenue());
+            entry.setProfit(entry.getProfit() + haulReportEntry.getProfit());
 
         }
         List<HaulSummary> summaryList = new ArrayList<>();
@@ -121,8 +124,8 @@ public class DefaultReportService implements ReportService {
 
 
     @Override
-    public List<Haul> convertEventsToHauls(List<EquipmentStatus> statusList, Map<String, Double> revenueSchedule, Map<String, Equipment> equipmentMap) {
-        List<Haul> haulList = new ArrayList<>();
+    public List<HaulReportEntry> convertEventsToHauls(List<EquipmentStatus> statusList, Map<String, Double> revenueSchedule, Map<String, Equipment> equipmentMap) {
+        List<HaulReportEntry> haulReportEntryList = new ArrayList<>();
 
         EquipmentStatus loadingEvent = null;
         EquipmentStatus unloadingEvent = null;
@@ -153,10 +156,10 @@ public class DefaultReportService implements ReportService {
                 unloadingEvent = event;
             }
             if (loadingEvent != null && unloadingEvent != null) {
-                Haul haul = new Haul();
+                HaulReportEntry haulReportEntry = new HaulReportEntry();
                 Equipment equipment = equipmentMap.get(loadingEvent.getEquipment());
-                haul.setLoadTime(loadingEvent.getTimestamp());
-                haul.setUnloadTime(unloadingEvent.getTimestamp());
+                haulReportEntry.setLoadTime(loadingEvent.getTimestamp());
+                haulReportEntry.setUnloadTime(unloadingEvent.getTimestamp());
                 int indexOfUnloadingEvent = statusList.indexOf(unloadingEvent);
                 int indexOfNextEvent = indexOfUnloadingEvent + 1;
                 LocalDateTime haulStartTime = LocalDateTime.ofInstant(loadingEvent.getTimestamp().toInstant(), ZoneId.systemDefault());
@@ -168,30 +171,30 @@ public class DefaultReportService implements ReportService {
                     }
                 }
                 long duration = Duration.between(haulStartTime, haulFinishTime).toMinutes();
-                haul.setDuration(duration);
-                haul.setEquipment(equipment.getName());
-                haul.setLoadType(loadingEvent.getTask());
+                haulReportEntry.setDuration(duration);
+                haulReportEntry.setEquipment(equipment.getName());
+                haulReportEntry.setLoadType(loadingEvent.getTask());
                 if(equipment.getCapacity() == null){
-                    haul.setVolume(0);
+                    haulReportEntry.setVolume(0);
                 }else {
-                    haul.setVolume(equipment.getCapacity());
+                    haulReportEntry.setVolume(equipment.getCapacity());
                 }
                 double costPerHour = 0;
                 if(equipment.getCostPerHour() != null){
                     costPerHour = equipment.getCostPerHour();
                 }
                 double cost = costPerHour / MILLISECONDS_IN_HOUR * Duration.between(haulStartTime, haulFinishTime).toMillis();
-                haul.setCost(cost);
-                double revenue = haul.getVolume() * revenueSchedule.get(loadingEvent.getTask());
-                haul.setRevenue(revenue);
+                haulReportEntry.setCost(cost);
+                double revenue = haulReportEntry.getVolume() * revenueSchedule.get(loadingEvent.getTask());
+                haulReportEntry.setRevenue(revenue);
                 double profit = revenue - cost;
-                haul.setProfit(profit);
-                haulList.add(haul);
+                haulReportEntry.setProfit(profit);
+                haulReportEntryList.add(haulReportEntry);
                 loadingEvent = null;
                 unloadingEvent = null;
             }
         }
-        return haulList;
+        return haulReportEntryList;
     }
 
 
@@ -201,8 +204,8 @@ public class DefaultReportService implements ReportService {
         List<EquipmentStatus> statusList = getEquipmentStatusForTodayByProjectId(projectId);
         Map<String, Equipment> equipmentMap = projectService.getEquipmentsForProject(projectId).stream().collect(Collectors.toMap(Equipment::getName, p -> p));
         Map<String, Double> taskToRevenueMap = projectService.getTaskRevenueMapForProject(projectId);
-        List<Haul> haulList = convertEventsToHauls(statusList,taskToRevenueMap,equipmentMap);
-        List<HaulSummary> summaryList = getSummaryFromHauls(haulList);
+        List<HaulReportEntry> haulReportEntryList = convertEventsToHauls(statusList,taskToRevenueMap,equipmentMap);
+        List<HaulSummary> summaryList = getSummaryFromHauls(haulReportEntryList);
         return summaryList;
     }
 
@@ -296,9 +299,9 @@ public class DefaultReportService implements ReportService {
         List<EquipmentStatus> statusList = this.getEquipmentStatusByProjectIdAndTimestamp(projectId, startTime, endTime);
         Map<String, Equipment> equipmentMap = projectService.getEquipmentsForProject(projectId).stream().collect(Collectors.toMap(Equipment::getName, p -> p));
         Map<String, Double> taskToRevenueMap = projectService.getTaskRevenueMapForProject(projectId);
-        List<Haul> haulList = this.convertEventsToHauls(statusList,taskToRevenueMap,equipmentMap );
-        List<HaulSummary> summaryList = this.getSummaryFromHauls(haulList);
-        Workbook workbook = this.writeReportForProject(statusList, haulList,  summaryList);
+        List<HaulReportEntry> haulReportEntryList = this.convertEventsToHauls(statusList,taskToRevenueMap,equipmentMap );
+        List<HaulSummary> summaryList = this.getSummaryFromHauls(haulReportEntryList);
+        Workbook workbook = this.writeReportForProject(statusList, haulReportEntryList,  summaryList);
         Map<String, Object> variableMap = this.getLoadCountVariableMap(summaryList);
         variableMap.put("projectName",project.getName() );
         String content = this.buildEmailContentFromSummary(variableMap, "loadCountSummary");

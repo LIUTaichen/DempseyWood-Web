@@ -1,7 +1,7 @@
-package com.dempseywood.model;
+package com.dempseywood.model.locationbased;
 
 import com.dempseywood.model.Equipment;
-import com.dempseywood.model.Geofence;
+import com.dempseywood.model.locationbased.Geofence;
 
 import java.util.Date;
 
