@@ -12,5 +12,7 @@ public interface HaulRepository extends CrudRepository<Haul, Integer>,JpaSpecifi
 
 
 
-    //public List<Haul> findByImeiAndLoadTimeAfterAndUnloadTimeBefore(String imei, Date fromDate, Date toDate);
+
+    List<Haul> findByLoadTimeAfterAndUnloadTimeBeforeAndEquipmentIdInOrderByEquipmentDescLoadTime(Date startTime, Date endTime, List<Integer> equipmentIds);
+
 }

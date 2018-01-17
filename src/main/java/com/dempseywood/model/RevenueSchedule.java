@@ -13,6 +13,8 @@ public class RevenueSchedule {
     private Project project;
 
     private String description;
+    private String name;
+
     private Double revenue;
 
     public Integer getId() {
@@ -35,8 +37,16 @@ public class RevenueSchedule {
         return description;
     }
 
-    public void setDescription(String task) {
-        this.description = task;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Double getRevenue() {
@@ -45,5 +55,16 @@ public class RevenueSchedule {
 
     public void setRevenue(Double revenue) {
         this.revenue = revenue;
+    }
+
+    @Override
+    public String toString() {
+        return "RevenueSchedule{" +
+                "id=" + id +
+                ", project=" + project +
+                ", description='" + description + '\'' +
+                ", name='" + name + '\'' +
+                ", revenue=" + revenue +
+                '}';
     }
 }

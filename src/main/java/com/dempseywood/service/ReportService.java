@@ -11,11 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface ReportService {
-    Workbook writeReportForProject(List<EquipmentStatus> statusList, List<HaulReportEntry> haulReportEntryList, List<HaulSummary> summaryList);
 
     List<HaulSummary> getSummaryFromHauls(List<HaulReportEntry> haulReportEntryList);
-
-    List<HaulReportEntry> convertEventsToHauls(List<EquipmentStatus> statusList, Map<String, Double> revenueScheule, Map<String, Equipment> equipmentMap);
 
     List<HaulSummary> getSummaryList(Integer projectId);
 
@@ -28,5 +25,6 @@ public interface ReportService {
     Map<String, Object> getLoadCountVariableMap(List<HaulSummary> summaryList);
 
     void sendReportForProject(Integer projectId, Date startTime, Date endTime);
+    Workbook writeReportForProject(List<HaulReportEntry> haulReportEntryList, List<HaulSummary> summaryList);
 
 }

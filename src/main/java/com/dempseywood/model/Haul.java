@@ -18,7 +18,6 @@ public class Haul {
     @JoinColumn(name="taskId")
     private Task task;
 
-
     private String operator;
 
     private Double loadLatitude;

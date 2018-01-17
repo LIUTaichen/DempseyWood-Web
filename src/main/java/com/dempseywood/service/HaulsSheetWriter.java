@@ -46,7 +46,7 @@ public class HaulsSheetWriter extends SheetWriter{
         int currentRow = 0;
         int currentColumn = 0;
         Row header = sheet.createRow(currentRow++);
-        String[] columnNames = {"Haul Time", "Unload Time", "Duration (minutes)", "Machine","Haul Type", "Volume","Cost", "Revenue" ,"Profit" };
+        String[] columnNames = {"Load Time", "Unload Time", "Duration (minutes)", "Machine","Haul Type", "Volume","Cost", "Revenue" ,"Profit" };
         for(int i = 0; i<columnNames.length; i ++){
             header.createCell(currentColumn).setCellValue(columnNames[i]);
             header.getCell(currentColumn).setCellStyle(headerStyle);
