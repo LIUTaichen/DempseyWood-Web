@@ -261,7 +261,7 @@ public class HaulControllerTest {
                 "\"haulUuid\": \"test uuid\"\n" +
                 "}";
         mockMvc.perform(post("/api/hauls/100/updateTask").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isCreated());
+                .andExpect(status().isAccepted());
 
     }
 

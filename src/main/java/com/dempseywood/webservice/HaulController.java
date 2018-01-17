@@ -95,12 +95,15 @@ public class HaulController {
 
             Haul existingHaul = haulRepository.findOneByUuid(input.getUuid());
             if(existingHaul != null){
+                log.info("request with uuid : " + input.getUuid() + " is already processed");
                 return ResponseEntity.status(HttpStatus.CONFLICT).build();
             }
 
             boolean isValid = haulService.isValidHaul(input);
             if(!isValid) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                log.info("Invalid task or equipment");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .build();
             }
 
             Haul newHaul = haulService.buildNewHaulFromInput(input);
@@ -153,7 +156,7 @@ public class HaulController {
         }
 
         Haul newHaul = haulService.updateTask(haulId, input);
-        return new ResponseEntity<>(newHaul, HttpStatus.CREATED);
+        return new ResponseEntity<>(newHaul, HttpStatus.ACCEPTED);
     }
 
 

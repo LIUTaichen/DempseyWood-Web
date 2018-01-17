@@ -21,8 +21,6 @@ public class Haul {
 
     private String operator;
 
-    private String status;
-
     private Double loadLatitude;
     private Double loadLongitude;
 
@@ -69,13 +67,6 @@ public class Haul {
         this.operator = operator;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
     public Double getLoadLatitude() {
         return loadLatitude;
