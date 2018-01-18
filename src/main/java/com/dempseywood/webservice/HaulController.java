@@ -2,6 +2,7 @@ package com.dempseywood.webservice;
 
 import com.dempseywood.model.Haul;
 import com.dempseywood.model.dto.FinishHaulRequest;
+import com.dempseywood.model.dto.HaulDTO;
 import com.dempseywood.model.dto.StartHaulRequest;
 import com.dempseywood.model.UpdateTaskRequest;
 import com.dempseywood.repository.HaulRepository;
@@ -25,7 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/hauls")
+@RequestMapping("/api/haul")
 public class HaulController {
 
     private Logger log = LoggerFactory.getLogger(HaulController.class);
@@ -107,7 +108,7 @@ public class HaulController {
             }
 
             Haul newHaul = haulService.buildNewHaulFromInput(input);
-            return new ResponseEntity<>(newHaul, HttpStatus.CREATED);
+            return new ResponseEntity<>(getDTOFromHaul(newHaul), HttpStatus.CREATED);
     }
 
     /**
@@ -128,7 +129,7 @@ public class HaulController {
             existingHaul.setUnloadLatitude(input.getUnloadLatitude());
             existingHaul.setUnloadLongitude(input.getUnloadLongitude());
             existingHaul = haulRepository.save(existingHaul);
-            return new ResponseEntity<>(existingHaul, HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(getDTOFromHaul(existingHaul), HttpStatus.ACCEPTED);
         }
 
     }
@@ -143,7 +144,7 @@ public class HaulController {
         }
 
         Haul newHaul = haulService.updateHaulForUnload(haulId, input);
-        return new ResponseEntity<>(newHaul, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(getDTOFromHaul(newHaul), HttpStatus.ACCEPTED);
     }
 
     @RequestMapping(value="/{haulId}/updateTask", method = RequestMethod.POST,  produces = "application/json")
@@ -156,8 +157,25 @@ public class HaulController {
         }
 
         Haul newHaul = haulService.updateTask(haulId, input);
-        return new ResponseEntity<>(newHaul, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(getDTOFromHaul(newHaul), HttpStatus.ACCEPTED);
     }
+
+    @RequestMapping(value="/batch", method = RequestMethod.POST,  produces = "application/json")
+    ResponseEntity<?> batchUpdate(@RequestBody List<HaulDTO> haulDTOs) {
+
+        List<HaulDTO> newHauls = haulService.batchProcess(haulDTOs);
+        HaulDTO[] haulDtos = new HaulDTO[newHauls.size()];
+        for(int i = 0; i < newHauls.size(); i++){
+            haulDtos[i] = newHauls.get(i);
+        }
+        return new ResponseEntity<>(haulDtos, HttpStatus.ACCEPTED);
+    }
+
+    private HaulDTO getDTOFromHaul(Haul haul){
+        return haulService.getDTOFromHaul(haul);
+    }
+
+
 
 
 }

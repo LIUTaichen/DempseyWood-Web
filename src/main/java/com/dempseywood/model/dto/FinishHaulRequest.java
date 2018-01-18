@@ -6,9 +6,9 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 public class FinishHaulRequest {
-    @NotNull(message = "unloadLatitude is compulsory")
+
     private Double unloadLatitude;
-    @NotNull(message = "unloadLongitude is compulsory")
+
     private Double unloadLongitude;
     @NotNull(message = "unloadTime is compulsory")
     private Date unloadTime;

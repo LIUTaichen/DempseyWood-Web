@@ -4,6 +4,7 @@ import com.dempseywood.model.Haul;
 import com.dempseywood.model.Task;
 import com.dempseywood.model.UpdateTaskRequest;
 import com.dempseywood.model.dto.FinishHaulRequest;
+import com.dempseywood.model.dto.HaulDTO;
 import com.dempseywood.model.dto.StartHaulRequest;
 import com.dempseywood.repository.EquipmentRepository;
 import com.dempseywood.repository.HaulRepository;
@@ -92,5 +93,59 @@ public class HaulService {
         existingHaul.setTask(newTask);
         updateTaskRequestRepository.save(input);
         return haulRepository.save(existingHaul);
+    }
+
+    public List<HaulDTO> batchProcess(List<HaulDTO> hauls){
+        List<HaulDTO>  returnList = new ArrayList<>();
+        for(HaulDTO haulDTO: hauls){
+            Haul existingHaul = haulRepository.findOneByUuid(haulDTO.getUuid());
+            if(existingHaul == null){
+                existingHaul = haulRepository.save(getHaulFromDto(haulDTO));
+                returnList.add(getDTOFromHaul(existingHaul));
+            }else{
+                existingHaul.setUnloadTime(haulDTO.getUnloadTime());
+                existingHaul.setUnloadLatitude(haulDTO.getUnloadLatitude());
+                existingHaul.setUnloadLongitude(haulDTO.getUnloadLongitude());
+                existingHaul = haulRepository.save(existingHaul);
+                returnList.add(getDTOFromHaul(existingHaul));
+            }
+        }
+        return returnList;
+    }
+
+    public HaulDTO getDTOFromHaul(Haul haul){
+        HaulDTO dto = new HaulDTO();
+
+        dto.setEquipment(haul.getEquipment().getName());
+        dto.setImei(haul.getImei());
+        dto.setTask(haul.getTask().getName());
+        dto.setOperator(haul.getOperator());
+        dto.setUuid(haul.getUuid());
+        dto.setLoadTime(haul.getLoadTime());
+        dto.setLoadLatitude(haul.getLoadLatitude());
+        dto.setLoadLongitude(haul.getLoadLongitude());
+        dto.setUnloadTime(haul.getUnloadTime());
+        dto.setUnloadLatitude(haul.getUnloadLatitude());
+        dto.setUnloadLongitude(haul.getUnloadLongitude());
+        dto.setId(haul.getId());
+        return dto;
+    }
+
+    public Haul getHaulFromDto(HaulDTO haulDTO){
+        Haul haul = new Haul();
+
+        haul.setEquipment(equipmentRepository.findByName(haulDTO.getEquipment()));
+        haul.setImei(haulDTO.getImei());
+        haul.setTask(taskRepository.findByName(haulDTO.getTask()));
+        haul.setOperator(haulDTO.getOperator());
+        haul.setUuid(haulDTO.getUuid());
+        haul.setLoadTime(haulDTO.getLoadTime());
+        haul.setLoadLatitude(haulDTO.getLoadLatitude());
+        haul.setLoadLongitude(haulDTO.getLoadLongitude());
+        haul.setUnloadTime(haulDTO.getUnloadTime());
+        haul.setUnloadLatitude(haulDTO.getUnloadLatitude());
+        haul.setUnloadLongitude(haulDTO.getUnloadLongitude());
+        haul.setId(haulDTO.getId());
+        return haul;
     }
 }

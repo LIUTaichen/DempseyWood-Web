@@ -90,17 +90,17 @@ public class HaulControllerTest {
 
     @Test
     public void getHauls() throws Exception {
-        mockMvc.perform(get("/api/hauls"))
+        mockMvc.perform(get("/api/haul"))
                 .andExpect(status().isOk())
                 .andDo(document("home"));
     }
 
     @Test
     public void getHaul() throws Exception {
-        mockMvc.perform(get("/api/hauls/99999"))
+        mockMvc.perform(get("/api/haul/99999"))
                 .andExpect(status().isNotFound())
                 .andDo(document("home"));
-        mockMvc.perform(get("/api/hauls/100"))
+        mockMvc.perform(get("/api/haul/100"))
                 .andExpect(status().isOk())
                 .andDo(document("home"));
 
@@ -128,7 +128,7 @@ public class HaulControllerTest {
                 "\"imei\": \"1111\",\n" +
                 "\"uuid\": \"test uuid\"\n" +
                 "}";
-        mockMvc.perform(post("/api/hauls/").contentType(MediaType.APPLICATION_JSON).content(json))
+        mockMvc.perform(post("/api/haul/").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isCreated());
 
     }
@@ -153,7 +153,7 @@ public class HaulControllerTest {
                 "\"imei\": \"1111\",\n" +
                 "\"uuid\": \"test uuid\"\n" +
                 "}";
-        mockMvc.perform(post("/api/hauls/").contentType(MediaType.APPLICATION_JSON).content(json))
+        mockMvc.perform(post("/api/haul/").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isConflict());
     }
 
@@ -177,7 +177,7 @@ public class HaulControllerTest {
                 "\"imei\": \"1111\",\n" +
                 "\"uuid\": \"test uuid\"\n" +
                 "}";
-        mockMvc.perform(post("/api/hauls/").contentType(MediaType.APPLICATION_JSON).content(json))
+        mockMvc.perform(post("/api/haul/").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isBadRequest());
     }
 
@@ -194,7 +194,7 @@ public class HaulControllerTest {
                 "\"unloadLongitude\": 1,\n" +
                 "\"unloadTime\": \"2012-04-23T18:25:43.511Z\"\n" +
                 "}";
-        mockMvc.perform(post("/api/hauls/100/unload").contentType(MediaType.APPLICATION_JSON).content(json))
+        mockMvc.perform(post("/api/haul/100/unload").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isAccepted());
     }
 
@@ -213,7 +213,7 @@ public class HaulControllerTest {
                 "\"unloadTime\": \"2012-04-23T18:25:43.511Z\"\n" +
 
                 "}";
-        mockMvc.perform(post("/api/hauls/100/unload").contentType(MediaType.APPLICATION_JSON).content(json))
+        mockMvc.perform(post("/api/haul/100/unload").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isNotFound());
     }
 
@@ -238,7 +238,7 @@ public class HaulControllerTest {
                 "\"imei\": \"1111\",\n" +
                 "\"uuid\": \"test uuid\"\n" +
                 "}";
-        mockMvc.perform(post("/api/hauls/100/unload").contentType(MediaType.APPLICATION_JSON).content(json))
+        mockMvc.perform(post("/api/haul/100/unload").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isBadRequest());
     }
 
@@ -260,7 +260,7 @@ public class HaulControllerTest {
                 "\"imei\": \"1111\",\n" +
                 "\"haulUuid\": \"test uuid\"\n" +
                 "}";
-        mockMvc.perform(post("/api/hauls/100/updateTask").contentType(MediaType.APPLICATION_JSON).content(json))
+        mockMvc.perform(post("/api/haul/100/updateTask").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isAccepted());
 
     }
@@ -284,7 +284,7 @@ public class HaulControllerTest {
                 "\"imei\": \"1111\",\n" +
                 "\"haulUuid\": \"test uuid\"\n" +
                 "}";
-        mockMvc.perform(post("/api/hauls/100/updateTask").contentType(MediaType.APPLICATION_JSON).content(json))
+        mockMvc.perform(post("/api/haul/100/updateTask").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isBadRequest());
 
     }
@@ -308,7 +308,7 @@ public class HaulControllerTest {
                 "\"imei\": \"1111\",\n" +
                 "\"haulUuid\": \"test uuid\"\n" +
                 "}";
-        mockMvc.perform(post("/api/hauls/100/updateTask").contentType(MediaType.APPLICATION_JSON).content(json))
+        mockMvc.perform(post("/api/haul/100/updateTask").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isNotFound());
     }
 }
