@@ -171,6 +171,22 @@ public class HaulController {
         return new ResponseEntity<>(haulDtos, HttpStatus.ACCEPTED);
     }
 
+    @RequestMapping(value="/batchUpdateTask", method = RequestMethod.POST,  produces = "application/json")
+    ResponseEntity<?> batchUpdateTask(@RequestBody @Valid List<UpdateTaskRequest> input) {
+        List<HaulDTO> returnList = new ArrayList<>();
+
+        for(UpdateTaskRequest request : input){
+            Haul existingHaul = haulRepository.findOne(request.getId());
+            if(existingHaul ==  null){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            Haul newHaul = haulService.updateTask(request.getId(), request);
+            returnList.add(getDTOFromHaul(newHaul));
+        }
+
+        return new ResponseEntity<>(returnList, HttpStatus.ACCEPTED);
+    }
+
     private HaulDTO getDTOFromHaul(Haul haul){
         return haulService.getDTOFromHaul(haul);
     }

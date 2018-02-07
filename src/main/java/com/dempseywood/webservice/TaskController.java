@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/tasks")
+@RequestMapping("/api/task")
 public class TaskController {
 
     private Logger log = LoggerFactory.getLogger(TaskController.class);
